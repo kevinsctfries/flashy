@@ -1,13 +1,16 @@
 <main class="main">
   <div class="messages-container">
-    <div class="sent-messages">
-      <div class="message" *ngFor="let message of sentMessage">
-        <p>{{ message }}</p>
-      </div>
-    </div>
-    <div class="received-messages">
-      <div class="message" *ngFor="let message of receivedMessage">
-        <p>{{ message }}</p>
+    <div
+      class="message-wrapper"
+      *ngFor="let msg of chronologicalMessages"
+      [ngClass]="msg.type === 'sent' ? 'sent-wrapper' : 'received-wrapper'"
+    >
+      <span class="timestamp">{{ msg.timestamp | date : "shortTime" }}</span>
+      <div
+        class="message"
+        [ngClass]="msg.type === 'sent' ? 'sent-message' : 'received-message'"
+      >
+        <p>{{ msg.text }}</p>
       </div>
     </div>
   </div>
@@ -18,8 +21,15 @@
         type="text"
         class="message-input"
         placeholder="Type your message..."
+        [(ngModel)]="message"
+        (keydown.enter)="sendMessage($event)"
       />
-      <button class="send-button" type="submit">
+      <button
+        class="send-button"
+        type="submit"
+        title="Send message"
+        (click)="sendMessage($event)"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="16"
