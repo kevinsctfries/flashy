@@ -4,25 +4,38 @@ from app.models.chat import Chat
 
 chat_bp = Blueprint('chat', __name__)
 
-@chat_bp.route('/chat', methods=['POST', 'OPTIONS'])
-def chat():
-    if request.method == 'OPTIONS':
-        return '', 204
+# @chat_bp.route('/chat', methods=['POST', 'OPTIONS'])
+# def chat():
+#     if request.method == 'OPTIONS':
+#         return '', 204
     
-    data = request.get_json()
-    message = data.get('message')
+#     data = request.get_json()
+#     message = data.get('message')
     
-    # Create new chat entry
-    chat = Chat(
-        message=message,
-        response=f'Received your message: {message}',
-        conversation_id='test-conversation'  # I'll get around to changing this
-    )
+#     # Create new chat entry
+#     chat = Chat(
+#         message=message,
+#         response=f'Received your message: {message}',
+#         conversation_id='test-conversation'  # I'll get around to changing this
+#     )
     
-    # Save to database
-    db.session.add(chat)
-    db.session.commit()
+#     # Save to database
+#     db.session.add(chat)
+#     db.session.commit()
     
-    return jsonify({
-        'reply': chat.response
-    })
+#     return jsonify({
+#         'reply': chat.response
+#     })
+
+@chat_bp.route('/chat/conversation/<conversation_id>', methods=['GET'])
+def get_conversation(conversation_id):
+    messages = Chat.query.filter_by(conversation_id=conversation_id)\
+        .order_by(Chat.created_at.asc())\
+        .all()
+    
+    return jsonify([{
+        'text': msg.message,
+        'response': msg.response,
+        'timestamp': msg.created_at.timestamp() * 1000,
+        'type': 'chat'
+    } for msg in messages])

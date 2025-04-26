@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ChatService } from './services/chat.service';
 import { HttpClient } from '@angular/common/http';
 
 interface Message {
@@ -19,14 +20,31 @@ interface ChatResponse {
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'flashy';
   message = '';
   sentMessage: Message[] = [];
   receivedMessage: Message[] = [];
   private apiUrl = 'http://localhost:5000/api';
 
-  constructor(private http: HttpClient) {}
+  constructor(private chatService: ChatService, private http: HttpClient) {}
+  ngOnInit(): void {
+    this.loadConversation();
+  }
+
+  private loadConversation() {
+    this.chatService.getConversation().subscribe({
+      next: (messages) => {
+        messages.forEach((msg) => {
+          this.sentMessage.push({ text: msg.text, timestamp: msg.timestamp });
+          this.receiveMessage(msg.response, msg.timestamp);
+        });
+      },
+      error: (error) => {
+        console.error('Error loading conversation:', error);
+      },
+    });
+  }
 
   sendMessage(event: Event): void {
     event.preventDefault();
