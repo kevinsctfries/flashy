@@ -1,25 +1,32 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
-type Message = {
+interface Message {
   text: string;
   timestamp: number;
-};
+}
+
+interface ChatResponse {
+  reply: string;
+}
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
   title = 'flashy';
-  message: string = '';
+  message = '';
   sentMessage: Message[] = [];
   receivedMessage: Message[] = [];
+  private apiUrl = 'http://localhost:5000/api';
+
+  constructor(private http: HttpClient) {}
 
   sendMessage(event: Event): void {
     event.preventDefault();
@@ -27,10 +34,21 @@ export class AppComponent {
       const now = Date.now();
       this.sentMessage.push({ text: this.message, timestamp: now });
 
-      // Simulate AI response after a short delay
-      setTimeout(() => {
-        this.receiveMessage('AI response goes here', Date.now());
-      }, 300);
+      // Send message to backend
+      this.http
+        .post<ChatResponse>(`${this.apiUrl}/chat`, { message: this.message })
+        .subscribe({
+          next: (response: ChatResponse) => {
+            this.receiveMessage(response.reply, Date.now());
+          },
+          error: (error) => {
+            console.error('Error sending message:', error);
+            this.receiveMessage(
+              'Sorry, there was an error processing your message.',
+              Date.now()
+            );
+          },
+        });
 
       this.message = '';
     }

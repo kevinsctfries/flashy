@@ -1,19 +1,20 @@
 # See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
 # Compiled output
-/dist
-/tmp
-/out-tsc
-/bazel-out
+/frontend/dist
+/frontend/tmp
+/frontend/out-tsc
+/frontend/bazel-out
 
 # Node
-/node_modules
-npm-debug.log
-yarn-error.log
+/frontend/node_modules
+/frontend/npm-debug.log
+/frontend/yarn-error.log
 
 # Python
 .venv/
 __pycache__/
+*.pyc
 
 # IDEs and editors
 .idea/
@@ -27,14 +28,18 @@ __pycache__/
 # Visual Studio Code
 .vscode/
 
-# Miscellaneous
-/.angular/cache
-.sass-cache/
-/connect.lock
-/coverage
-/libpeerconnection.log
-testem.log
-/typings
+# Angular specific
+.angular
+/frontend/.angular/
+/frontend/.sass-cache/
+/frontend/connect.lock
+/frontend/coverage
+/frontend/libpeerconnection.log
+/frontend/testem.log
+/frontend/typings
+
+# Database
+/backend/data/flashy.db
 
 # System files
 .DS_Store
