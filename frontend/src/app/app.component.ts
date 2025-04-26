@@ -1,16 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ChatService } from './services/chat.service';
+import {
+  ChatService,
+  ChatMessage,
+  ChatResponse,
+} from './services/chat.service';
 import { HttpClient } from '@angular/common/http';
 
 interface Message {
   text: string;
   timestamp: number;
-}
-
-interface ChatResponse {
-  reply: string;
+  type?: 'sent' | 'received';
 }
 
 @Component({
@@ -21,6 +22,7 @@ interface ChatResponse {
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
+  userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   title = 'flashy';
   message = '';
   sentMessage: Message[] = [];
@@ -32,29 +34,46 @@ export class AppComponent implements OnInit {
     this.loadConversation();
   }
 
-  private loadConversation() {
+  private loadConversation(): void {
+    this.sentMessage = [];
+    this.receivedMessage = [];
+
     this.chatService.getConversation().subscribe({
-      next: (messages) => {
-        messages.forEach((msg) => {
+      next: (messages: ChatMessage[]) => {
+        const sortedMessages = messages.sort(
+          (a: ChatMessage, b: ChatMessage) => a.timestamp - b.timestamp
+        );
+        sortedMessages.forEach((msg: ChatMessage) => {
           this.sentMessage.push({ text: msg.text, timestamp: msg.timestamp });
           this.receiveMessage(msg.response, msg.timestamp);
         });
       },
-      error: (error) => {
+      error: (error: Error) => {
         console.error('Error loading conversation:', error);
       },
     });
+  }
+
+  get chronologicalMessages() {
+    const allMessages = [
+      ...this.sentMessage.map((msg) => ({ ...msg, type: 'sent' })),
+      ...this.receivedMessage.map((msg) => ({ ...msg, type: 'received' })),
+    ];
+
+    return allMessages.sort((a, b) => a.timestamp - b.timestamp);
   }
 
   sendMessage(event: Event): void {
     event.preventDefault();
     if (this.message.trim()) {
       const now = Date.now();
-      this.sentMessage.push({ text: this.message, timestamp: now });
+      const messageText = this.message;
+      this.message = '';
 
-      // Send message to backend
+      this.sentMessage.push({ text: messageText, timestamp: now });
+
       this.http
-        .post<ChatResponse>(`${this.apiUrl}/chat`, { message: this.message })
+        .post<ChatResponse>(`${this.apiUrl}/chat`, { message: messageText })
         .subscribe({
           next: (response: ChatResponse) => {
             this.receiveMessage(response.reply, Date.now());
@@ -67,21 +86,10 @@ export class AppComponent implements OnInit {
             );
           },
         });
-
-      this.message = '';
     }
   }
 
   receiveMessage(aiText: string, timestamp: number): void {
     this.receivedMessage.push({ text: aiText, timestamp });
-  }
-
-  get chronologicalMessages() {
-    const sent = this.sentMessage.map((m) => ({ ...m, type: 'sent' }));
-    const received = this.receivedMessage.map((m) => ({
-      ...m,
-      type: 'received',
-    }));
-    return [...sent, ...received].sort((a, b) => a.timestamp - b.timestamp);
   }
 }
