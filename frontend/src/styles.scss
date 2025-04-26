@@ -82,6 +82,7 @@ body {
                 background-color: var(--primary-color);
                 color: var(--text-color);
                 max-width: 60%;
+                border-radius: 12px;
             }
         }
 
@@ -91,12 +92,12 @@ body {
             .message {
                 color: var(--text-color);
                 width: 100%;
+                border-bottom: 1px solid var(--secondary-color);
             }
         }
 
         .message {
             padding: 0.75rem 1rem;
-            border-radius: 12px;
             word-wrap: break-word;
             font-size: var(--font-size-base);
             line-height: var(--line-height-base);
@@ -104,7 +105,7 @@ body {
 
         .timestamp {
             position: absolute;
-            right: -4rem; // Position timestamps to the right of messages
+            right: -4rem;
             top: 50%;
             transform: translateY(-50%);
             font-size: var(--font-size-xs);
@@ -247,6 +248,28 @@ body {
         .theme-icon {
             width: 1.5rem;
             height: 1.5rem;
+        }
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .main {
+        .messages-container {
+            .message-wrapper {
+                width: 100%;
+                padding-right: 3rem;
+                box-sizing: border-box;
+            }
+
+            .sent-wrapper {
+                .message {
+                    max-width: 80%;
+                }
+            }
+
+            .timestamp {
+                right: -1rem;
+            }
         }
     }
 }
