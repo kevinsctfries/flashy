@@ -52,7 +52,7 @@ body {
     z-index: 1;
     top: 0;
     left: 0;
-    transition: all 0.5s ease;
+    transition: all 0.2s ease;
     white-space: nowrap;
     overflow-x: hidden;
     visibility: visible;
@@ -118,7 +118,7 @@ body {
     display: flex;
     flex-direction: column;
     height: 100%;
-    transition: margin-left 0.5s;
+    transition: margin-left 0.2s;
     margin-left: 250px;
 
     .header {
@@ -145,7 +145,7 @@ body {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            transition: left 0.5s ease;
+            transition: left 0.2s ease;
 
             &:hover {
                 background-color: var(--button-hover);
