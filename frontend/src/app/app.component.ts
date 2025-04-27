@@ -39,7 +39,7 @@ export class AppComponent implements OnInit {
     const sidebar = document.getElementById('mySidebar');
     const main = document.getElementById('main');
     const button = document.querySelector('.openbtn') as HTMLElement;
-    const isOpen = localStorage.getItem('sidebarOpen') !== 'false'; // Default to open if not set
+    const isOpen = localStorage.getItem('sidebarOpen') !== 'false';
 
     if (sidebar && main && button) {
       if (isOpen) {
@@ -97,6 +97,7 @@ export class AppComponent implements OnInit {
         .subscribe({
           next: (response: ChatResponse) => {
             this.receiveMessage(response.reply, Date.now());
+            this.scrollToBottom();
           },
           error: (error) => {
             console.error('Error sending message:', error);
@@ -109,8 +110,16 @@ export class AppComponent implements OnInit {
     }
   }
 
+  private scrollToBottom(): void {
+    const container = document.querySelector('.messages-container');
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+    }
+  }
+
   receiveMessage(aiText: string, timestamp: number): void {
     this.receivedMessage.push({ text: aiText, timestamp });
+    this.scrollToBottom();
   }
 
   openNav() {

@@ -66,17 +66,23 @@
       <h1 class="header-title">Flashy</h1>
     </div>
     <div class="messages-container">
-      <div
-        class="message-wrapper"
-        *ngFor="let msg of chronologicalMessages"
-        [ngClass]="msg.type === 'sent' ? 'sent-wrapper' : 'received-wrapper'"
-      >
-        <span class="timestamp">{{ msg.timestamp | date : "shortTime" }}</span>
+      <div class="scroller-content">
         <div
-          class="message"
-          [ngClass]="msg.type === 'sent' ? 'sent-message' : 'received-message'"
+          class="message-wrapper"
+          *ngFor="let msg of chronologicalMessages"
+          [ngClass]="msg.type === 'sent' ? 'sent-wrapper' : 'received-wrapper'"
         >
-          <p>{{ msg.text }}</p>
+          <span class="timestamp">{{
+            msg.timestamp | date : "shortTime"
+          }}</span>
+          <div
+            class="message"
+            [ngClass]="
+              msg.type === 'sent' ? 'sent-message' : 'received-message'
+            "
+          >
+            <p>{{ msg.text }}</p>
+          </div>
         </div>
       </div>
     </div>

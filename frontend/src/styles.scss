@@ -164,11 +164,18 @@ body {
 
     .messages-container {
         flex: 1;
-        overflow-y: auto;
+        overflow: auto;
         display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
+        flex-direction: column-reverse;
+        overflow-anchor: auto !important;
         padding: 1rem 2rem;
+
+        .scroller-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            transform: translateZ(0);
+        }
 
         .message-wrapper {
             display: flex;
@@ -237,9 +244,6 @@ body {
             background-color: var(--scrollbar-track);
             border-radius: 4px;
         }
-
-        scrollbar-width: thin;
-        scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
     }
 
     .input-section {
