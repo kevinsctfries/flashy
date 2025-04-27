@@ -32,15 +32,25 @@ export class AppComponent implements OnInit {
   constructor(private chatService: ChatService, private http: HttpClient) {}
   ngOnInit(): void {
     this.loadConversation();
-    // Set initial sidebar state
+    this.initializeSidebar();
+  }
+
+  private initializeSidebar(): void {
     const sidebar = document.getElementById('mySidebar');
     const main = document.getElementById('main');
     const button = document.querySelector('.openbtn') as HTMLElement;
+    const isOpen = localStorage.getItem('sidebarOpen') !== 'false'; // Default to open if not set
 
     if (sidebar && main && button) {
-      sidebar.style.left = '0';
-      main.style.marginLeft = '250px';
-      button.style.left = '1rem';
+      if (isOpen) {
+        sidebar.style.left = '0';
+        main.style.marginLeft = '250px';
+        button.style.left = '1rem';
+      } else {
+        sidebar.style.left = '-250px';
+        main.style.marginLeft = '0';
+        button.style.left = '1rem';
+      }
     }
   }
 
@@ -109,14 +119,17 @@ export class AppComponent implements OnInit {
     const button = document.querySelector('.openbtn') as HTMLElement;
 
     if (sidebar && main && button) {
-      if (sidebar.style.left === '0px') {
+      const isOpen = sidebar.style.left === '0px';
+      if (isOpen) {
         sidebar.style.left = '-250px';
         main.style.marginLeft = '0';
         button.style.left = '1rem';
+        localStorage.setItem('sidebarOpen', 'false');
       } else {
         sidebar.style.left = '0';
         main.style.marginLeft = '250px';
         button.style.left = '1rem';
+        localStorage.setItem('sidebarOpen', 'true');
       }
     }
   }
