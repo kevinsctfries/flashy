@@ -9,16 +9,15 @@
     --scrollbar-track: #2d3748;
     --text-color-secondary: #a0aec0;
 
-    // Font family
     --font-family-base: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
         sans-serif;
 
-    --font-size-xs: 0.75rem; // 12px - timestamps
-    --font-size-sm: 0.875rem; // 14px - small text
-    --font-size-base: 1rem; // 16px - body text
-    --font-size-lg: 1.125rem; // 18px - large text
-    --font-size-xl: 1.25rem; // 20px - headers
-    --line-height-base: 1.5; // Optimal line height
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --line-height-base: 1.5;
 }
 
 * {
@@ -49,6 +48,69 @@ body {
     height: 100%;
     background-color: var(--secondary-color);
     flex-shrink: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    transition: all 0.5s ease;
+    white-space: nowrap;
+    overflow-x: hidden;
+    visibility: visible;
+    opacity: 1;
+}
+
+.sidebar-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--secondary-color);
+
+    .app-title {
+        font-size: var(--font-size-xl);
+        font-weight: 600;
+        color: var(--text-color);
+    }
+}
+
+.sidebar-nav {
+    padding: 1rem;
+
+    .nav-section {
+        margin-bottom: 2rem;
+
+        .section-title {
+            font-size: var(--font-size-sm);
+            text-transform: uppercase;
+            color: var(--text-color-secondary);
+            margin-bottom: 0.75rem;
+            padding-left: 0.5rem;
+        }
+
+        .nav-list {
+            list-style: none;
+
+            .nav-item {
+                display: flex;
+                align-items: center;
+                padding: 0.75rem 0.5rem;
+                color: var(--text-color);
+                cursor: pointer;
+                border-radius: 0.375rem;
+                transition: background-color 0.2s ease;
+
+                &:hover {
+                    background-color: var(--secondary-color);
+                }
+
+                .nav-icon {
+                    margin-right: 0.75rem;
+                    font-size: var(--font-size-base);
+                }
+
+                span {
+                    font-size: var(--font-size-base);
+                }
+            }
+        }
+    }
 }
 
 .main {
@@ -56,6 +118,47 @@ body {
     display: flex;
     flex-direction: column;
     height: 100%;
+    transition: margin-left 0.5s;
+    margin-left: 250px;
+
+    .header {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        background-color: var(--background-color);
+        border-bottom: 1px solid var(--secondary-color);
+        height: 60px;
+
+        .openbtn {
+            position: relative;
+            font-size: 20px;
+            cursor: pointer;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            z-index: 2;
+            width: auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: left 0.5s ease;
+
+            &:hover {
+                background-color: var(--button-hover);
+            }
+        }
+
+        .header-title {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            color: var(--text-color);
+            padding-right: 1rem;
+        }
+    }
 
     .messages-container {
         flex: 1;
@@ -221,35 +324,6 @@ body {
             }
         }
     }
-
-    .theme-toggle {
-        position: fixed;
-        top: 1rem;
-        right: 1rem;
-        width: 2.5rem;
-        height: 2.5rem;
-        border-radius: 50%;
-        background-color: var(--secondary-color);
-        border: none;
-        color: var(--text-color);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s ease-in-out;
-        z-index: 1000;
-        padding: 0.5rem;
-
-        &:hover {
-            background-color: var(--button-hover);
-            transform: scale(1.1);
-        }
-
-        .theme-icon {
-            width: 1.5rem;
-            height: 1.5rem;
-        }
-    }
 }
 
 @media screen and (max-width: 1200px) {
@@ -270,6 +344,16 @@ body {
             .timestamp {
                 right: -1rem;
             }
+        }
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+
+        .nav-item span:not(.nav-icon) {
+            font-size: var(--font-size-sm);
         }
     }
 }

@@ -32,6 +32,16 @@ export class AppComponent implements OnInit {
   constructor(private chatService: ChatService, private http: HttpClient) {}
   ngOnInit(): void {
     this.loadConversation();
+    // Set initial sidebar state
+    const sidebar = document.getElementById('mySidebar');
+    const main = document.getElementById('main');
+    const button = document.querySelector('.openbtn') as HTMLElement;
+
+    if (sidebar && main && button) {
+      sidebar.style.left = '0';
+      main.style.marginLeft = '250px';
+      button.style.left = '1rem';
+    }
   }
 
   private loadConversation(): void {
@@ -91,5 +101,23 @@ export class AppComponent implements OnInit {
 
   receiveMessage(aiText: string, timestamp: number): void {
     this.receivedMessage.push({ text: aiText, timestamp });
+  }
+
+  openNav() {
+    const sidebar = document.getElementById('mySidebar');
+    const main = document.getElementById('main');
+    const button = document.querySelector('.openbtn') as HTMLElement;
+
+    if (sidebar && main && button) {
+      if (sidebar.style.left === '0px') {
+        sidebar.style.left = '-250px';
+        main.style.marginLeft = '0';
+        button.style.left = '1rem';
+      } else {
+        sidebar.style.left = '0';
+        main.style.marginLeft = '250px';
+        button.style.left = '1rem';
+      }
+    }
   }
 }

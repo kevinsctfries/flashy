@@ -1,9 +1,70 @@
 <div class="app-container">
-  <aside class="sidebar">
-    <!-- todo: will add sidebar content & convos here -->
+  <aside class="sidebar" id="mySidebar">
+    <nav class="sidebar-nav">
+      <!-- placeholder stuff -->
+      <div class="nav-section">
+        <h2 class="section-title">Subjects</h2>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <span class="nav-icon">📚</span>
+            <span>Mathematics</span>
+          </li>
+          <li class="nav-item">
+            <span class="nav-icon">🧬</span>
+            <span>Biology</span>
+          </li>
+          <li class="nav-item">
+            <span class="nav-icon">⚡</span>
+            <span>Physics</span>
+          </li>
+          <li class="nav-item">
+            <span class="nav-icon">🧪</span>
+            <span>Chemistry</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Study Materials -->
+      <div class="nav-section">
+        <h2 class="section-title">Study Materials</h2>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <span class="nav-icon">📝</span>
+            <span>Flashcards</span>
+          </li>
+          <li class="nav-item">
+            <span class="nav-icon">📄</span>
+            <span>Notes</span>
+          </li>
+          <li class="nav-item">
+            <span class="nav-icon">📑</span>
+            <span>Summaries</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Recent Uploads -->
+      <div class="nav-section">
+        <h2 class="section-title">Recent Uploads</h2>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <span class="nav-icon">📎</span>
+            <span>Physics_HW1.pdf</span>
+          </li>
+          <li class="nav-item">
+            <span class="nav-icon">📎</span>
+            <span>Bio_Chapter3.pdf</span>
+          </li>
+        </ul>
+      </div>
+    </nav>
   </aside>
 
-  <main class="main">
+  <main class="main" id="main">
+    <div class="header">
+      <button class="openbtn" (click)="openNav()">☰</button>
+      <h1 class="header-title">Flashy</h1>
+    </div>
     <div class="messages-container">
       <div
         class="message-wrapper"
