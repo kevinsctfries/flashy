@@ -13,18 +13,25 @@ def chat():
     
     data = request.get_json()
     message = data.get('message')
-    user_tz = data.get('timezone', 'America/New_York')  # Default to ET if not provided
+    user_tz = data.get('timezone', 'America/New_York')
     
     if not message:
         return jsonify({'error': 'No message provided'}), 400
-    
-    # Create timestamp in user's timezone
+
+    # temporarily set to 1, will fix later
+    conversation_id = 1
+
+    latest_message = Chat.query.filter_by(id=conversation_id)\
+        .order_by(Chat.message_id.desc()).first()
+    message_id = (latest_message.message_id + 1) if latest_message else 1
+
     local_time = datetime.now(ZoneInfo(user_tz))
     
     chat = Chat(
+        id=conversation_id,
+        message_id=message_id,
         message=message,
         response=f'Received your message: {message}',
-        conversation_id='test-conversation',
         created_at=local_time
     )
     
@@ -33,14 +40,15 @@ def chat():
     
     return jsonify({
         'reply': chat.response,
-        'timestamp': int(local_time.timestamp() * 1000)
+        'timestamp': int(local_time.timestamp() * 1000),
+        'conversation_id': conversation_id
     })
 
-@chat_bp.route('/chat/conversation/<conversation_id>', methods=['GET'])
+@chat_bp.route('/chat/conversation/<int:conversation_id>', methods=['GET'])
 def get_conversation(conversation_id):
     messages = Chat.query\
-        .filter_by(conversation_id=conversation_id)\
-        .order_by(Chat.created_at.asc())\
+        .filter_by(id=conversation_id)\
+        .order_by(Chat.message_id.asc())\
         .all()
     
     return jsonify([{
