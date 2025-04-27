@@ -44,3 +44,7 @@ __pycache__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Misc
+.prettierignore
+TODO

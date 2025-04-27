@@ -146,6 +146,7 @@ body {
             align-items: center;
             justify-content: center;
             transition: left 0.2s ease;
+            user-select: none;
 
             &:hover {
                 background-color: var(--button-hover);
