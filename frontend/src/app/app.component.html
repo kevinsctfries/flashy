@@ -72,9 +72,12 @@
           *ngFor="let msg of chronologicalMessages"
           [ngClass]="msg.type === 'sent' ? 'sent-wrapper' : 'received-wrapper'"
         >
-          <span class="timestamp">{{
-            msg.timestamp | date : "shortTime"
-          }}</span>
+          <!-- Only show timestamp for sent messages with date included -->
+          <span class="timestamp" *ngIf="msg.type === 'sent'">
+            <div class="time">{{ msg.timestamp | date : "h:mm a" }}</div>
+            <div class="date">{{ msg.timestamp | date : "MMM d, y" }}</div>
+          </span>
+
           <div
             class="message"
             [ngClass]="

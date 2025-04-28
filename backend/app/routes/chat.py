@@ -55,5 +55,5 @@ def get_conversation(conversation_id):
         'text': msg.message,
         'response': msg.response,
         'timestamp': int(msg.created_at.timestamp() * 1000),
-        'type': 'chat'
+        'type': 'received'
     } for msg in messages])

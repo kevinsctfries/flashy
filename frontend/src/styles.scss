@@ -220,9 +220,22 @@ body {
             right: -4rem;
             top: 50%;
             transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             font-size: var(--font-size-xs);
             color: var(--text-color-secondary);
             white-space: nowrap;
+            gap: 0.25rem;
+
+            .time {
+                font-weight: 500;
+            }
+
+            .date {
+                font-size: calc(var(--font-size-xs) * 0.8);
+                opacity: 0.8;
+            }
         }
 
         &::-webkit-scrollbar {
