@@ -3,6 +3,7 @@ from zoneinfo import ZoneInfo
 from flask import Blueprint, request, jsonify
 from app import db
 from app.models.chat import Chat
+from app.models.model_loader import summarize_text
 
 chat_bp = Blueprint('chat', __name__)
 
@@ -27,11 +28,18 @@ def chat():
 
     local_time = datetime.now(ZoneInfo(user_tz))
     
+    # Get summarization of user message
+    try:
+        ai_response = summarize_text(message)
+    except Exception as e:
+        print(f"Summarization error: {e}")
+        ai_response = f"Error summarizing: {message}"
+    
     chat = Chat(
         id=conversation_id,
         message_id=message_id,
         message=message,
-        response=f'Received your message: {message}',
+        response=ai_response,
         created_at=local_time
     )
     
