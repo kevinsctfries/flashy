@@ -3,7 +3,7 @@ from zoneinfo import ZoneInfo
 from flask import Blueprint, request, jsonify
 from app import db
 from app.models.chat import Chat
-from app.models.model_loader import summarize_text
+from app.models.model_loader import summarize_text, generate_flashcards
 
 chat_bp = Blueprint('chat', __name__)
 
@@ -28,12 +28,18 @@ def chat():
 
     local_time = datetime.now(ZoneInfo(user_tz))
     
-    # Get summarization of user message
     try:
-        ai_response = summarize_text(message)
+        flashcards = generate_flashcards(message)
+        if not flashcards:
+            ai_response = "No questions could be generated from the input."
+        else:
+            # Format each Q&A pair for display
+            formatted_pairs = [f"Q: {fc['question']}\nA: {fc['answer']}" for fc in flashcards]
+            ai_response = "\n\n".join(formatted_pairs)
+
     except Exception as e:
-        print(f"Summarization error: {e}")
-        ai_response = f"Error summarizing: {message}"
+        print(f"Flashcard generation error: {e}")
+        ai_response = f"Error generating flashcards for: {message}"
     
     chat = Chat(
         id=conversation_id,
