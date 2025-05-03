@@ -3,7 +3,7 @@ from zoneinfo import ZoneInfo
 from flask import Blueprint, request, jsonify
 from app import db
 from app.models.chat import Chat
-from app.models.model_loader import summarize_text, generate_flashcards
+from app.models.model_loader import generate_flashcards
 
 chat_bp = Blueprint('chat', __name__)
 
