@@ -72,7 +72,6 @@
           *ngFor="let msg of chronologicalMessages"
           [ngClass]="msg.type === 'sent' ? 'sent-wrapper' : 'received-wrapper'"
         >
-          <!-- Only show timestamp for sent messages with date included -->
           <span class="timestamp" *ngIf="msg.type === 'sent'">
             <div class="time">{{ msg.timestamp | date : "h:mm a" }}</div>
             <div class="date">{{ msg.timestamp | date : "MMM d, y" }}</div>
@@ -84,6 +83,16 @@
               msg.type === 'sent' ? 'sent-message' : 'received-message'
             "
           >
+            <div *ngIf="msg.flashcards?.length">
+              <div *ngFor="let card of msg.flashcards">
+                <div class="flashcard-question">
+                  <strong>Q: </strong>{{ card.question }}
+                </div>
+                <div class="flashcard-answer">
+                  <strong>A: </strong>{{ card.answer }}
+                </div>
+              </div>
+            </div>
             <p>{{ msg.text }}</p>
           </div>
         </div>

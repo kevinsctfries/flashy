@@ -30,12 +30,16 @@ def chat():
     
     try:
         flashcards = generate_flashcards(message)
-        if not flashcards:
-            ai_response = "No questions could be generated from the input."
+        if flashcards:
+            # format each Q&A pair with separate divs for questions and answers
+            formatted_pairs = [
+                f'<div class="question">{fc["question"]}</div><div class="answer">{fc["answer"]}</div>'
+                for fc in flashcards
+            ]
+            ai_response = "".join(formatted_pairs)
         else:
-            # Format each Q&A pair for display
-            formatted_pairs = [f"Q: {fc['question']}\nA: {fc['answer']}" for fc in flashcards]
-            ai_response = "\n\n".join(formatted_pairs)
+            ai_response = "No questions could be generated from the input."
+
 
     except Exception as e:
         print(f"Flashcard generation error: {e}")

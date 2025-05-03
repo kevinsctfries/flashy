@@ -12,6 +12,7 @@ interface Message {
   text: string;
   timestamp: number;
   type?: 'sent' | 'received';
+  flashcards?: { question: string; answer: string }[]; // Added flashcards field
 }
 
 @Component({
@@ -30,6 +31,7 @@ export class AppComponent implements OnInit {
   private apiUrl = 'http://localhost:5000/api';
 
   constructor(private chatService: ChatService, private http: HttpClient) {}
+
   ngOnInit(): void {
     this.loadConversation();
     this.initializeSidebar();
@@ -135,14 +137,18 @@ export class AppComponent implements OnInit {
   receiveMessage(aiText: string, timestamp: number): void {
     const formattedBlocks = this.formatQAResponse(aiText);
 
-    formattedBlocks.forEach((block) => {
-      const text = `Q: ${block.question}\nA: ${block.answer}`;
-      this.receivedMessage.push({ text, timestamp });
-    });
+    const flashcards = formattedBlocks.length > 0 ? formattedBlocks : undefined;
+
+    const message: Message = {
+      text: aiText,
+      timestamp,
+      flashcards,
+    };
+
+    this.receivedMessage.push(message);
 
     this.scrollToBottom();
   }
-
   openNav() {
     const sidebar = document.getElementById('mySidebar');
     const main = document.getElementById('main');
