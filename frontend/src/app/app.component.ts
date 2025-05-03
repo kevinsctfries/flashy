@@ -117,8 +117,29 @@ export class AppComponent implements OnInit {
     }
   }
 
+  private formatQAResponse(
+    response: string
+  ): { question: string; answer: string }[] {
+    return response
+      .split(/(?=Q:)/g)
+      .map((block) => {
+        const [q, a] = block.split(/A:/).map((s) => s.trim());
+        return {
+          question: q.replace(/^Q:\s*/, ''),
+          answer: a,
+        };
+      })
+      .filter((pair) => pair.question && pair.answer);
+  }
+
   receiveMessage(aiText: string, timestamp: number): void {
-    this.receivedMessage.push({ text: aiText, timestamp });
+    const formattedBlocks = this.formatQAResponse(aiText);
+
+    formattedBlocks.forEach((block) => {
+      const text = `Q: ${block.question}\nA: ${block.answer}`;
+      this.receivedMessage.push({ text, timestamp });
+    });
+
     this.scrollToBottom();
   }
 
