@@ -84,16 +84,16 @@
             "
           >
             <div *ngIf="msg.flashcards?.length">
-              <div *ngFor="let card of msg.flashcards">
+              <div class="flashcards" *ngFor="let card of msg.flashcards">
                 <div class="flashcard-question">
-                  <strong>Q: </strong>{{ card.question }}
+                  {{ card.question }}
                 </div>
                 <div class="flashcard-answer">
-                  <strong>A: </strong>{{ card.answer }}
+                  {{ card.answer }}
                 </div>
               </div>
             </div>
-            <p>{{ msg.text }}</p>
+            <p *ngIf="!msg.flashcards?.length">{{ msg.text }}</p>
           </div>
         </div>
       </div>

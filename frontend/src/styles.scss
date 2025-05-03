@@ -181,38 +181,63 @@ body {
             display: flex;
             position: relative;
             margin-bottom: 1rem;
-            width: 60%;
             padding: 0;
             margin-left: auto;
             margin-right: auto;
-        }
 
-        .sent-wrapper {
-            justify-content: flex-end;
+            &.sent-wrapper {
+                width: 60%;
+                justify-content: flex-end;
 
-            .message {
-                background-color: var(--primary-color);
-                color: var(--text-color);
-                max-width: 60%;
-                border-radius: 12px;
+                .message {
+                    background-color: var(--primary-color);
+                    color: var(--text-color);
+                    font-size: var(--font-size-base);
+                    line-height: var(--line-height-base);
+                    max-width: 70%;
+                    border-radius: 12px;
+                    padding: 0.75rem 1rem;
+                    word-wrap: break-word;
+                }
             }
-        }
 
-        .received-wrapper {
-            justify-content: flex-start;
-
-            .message {
-                color: var(--text-color);
+            &.received-wrapper {
                 width: 100%;
-                border-bottom: 1px solid var(--secondary-color);
-            }
-        }
+                justify-content: center;
 
-        .message {
-            padding: 0.75rem 1rem;
-            word-wrap: break-word;
-            font-size: var(--font-size-base);
-            line-height: var(--line-height-base);
+                .flashcards {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: center;
+                    gap: 1rem;
+                    flex-wrap: wrap;
+                    padding-bottom: 1rem;
+
+                    .flashcard-question,
+                    .flashcard-answer {
+                        flex: 1;
+                        background-color: var(--secondary-color);
+                        color: var(--text-color);
+                        font-family: var(--font-family-base);
+                        font-size: var(--font-size-base);
+                        line-height: var(--line-height-base);
+                        padding: 1rem;
+                        border-radius: 1rem;
+                        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+                        white-space: pre-wrap;
+                        transition: background-color 0.3s ease;
+                        min-width: 200px;
+                    }
+
+                    .flashcard-question {
+                        border-left: 4px solid var(--primary-color);
+                    }
+
+                    .flashcard-answer {
+                        border-left: 4px solid var(--button-background);
+                    }
+                }
+            }
         }
 
         .timestamp {
