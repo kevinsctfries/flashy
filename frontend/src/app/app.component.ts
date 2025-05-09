@@ -12,7 +12,7 @@ interface Message {
   text: string;
   timestamp: number;
   type?: 'sent' | 'received';
-  flashcards?: { question: string; answer: string }[]; // Added flashcards field
+  flashcards?: { question: string; answer: string }[];
 }
 
 @Component({

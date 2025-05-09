@@ -31,12 +31,17 @@ def chat():
     try:
         flashcards = generate_flashcards(message)
         if flashcards:
-            # format each Q&A pair with separate divs for questions and answers
+            # Each Q&A pair gets its own container div
             formatted_pairs = [
-                f'<div class="question">{fc["question"]}</div><div class="answer">{fc["answer"]}</div>'
+                f'<div class="flashcard-container">'
+                f'  <div class="flashcard-pair">'
+                f'    <div class="question">{fc["question"]}</div>'
+                f'    <div class="answer">{fc["answer"]}</div>'
+                f'  </div>'
+                f'</div>'
                 for fc in flashcards
             ]
-            ai_response = "".join(formatted_pairs)
+            ai_response = "\n".join(formatted_pairs)
         else:
             ai_response = "No questions could be generated from the input."
 

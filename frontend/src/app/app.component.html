@@ -83,17 +83,19 @@
               msg.type === 'sent' ? 'sent-message' : 'received-message'
             "
           >
-            <div *ngIf="msg.flashcards?.length">
-              <div class="flashcards" *ngFor="let card of msg.flashcards">
-                <div class="flashcard-question">
-                  {{ card.question }}
+            <!-- For sent messages -->
+            <div *ngIf="msg.type === 'sent'">{{ msg.text }}</div>
+
+            <!-- For received messages with flashcards -->
+            <div *ngIf="msg.type === 'received'" class="flashcard-container">
+              <ng-container *ngIf="msg.flashcards">
+                <div class="flashcard-pair" *ngFor="let card of msg.flashcards">
+                  <div class="question" [innerHTML]="card.question"></div>
+                  <div class="answer" [innerHTML]="card.answer"></div>
                 </div>
-                <div class="flashcard-answer">
-                  {{ card.answer }}
-                </div>
-              </div>
+              </ng-container>
+              <div *ngIf="!msg.flashcards" [innerHTML]="msg.text"></div>
             </div>
-            <p *ngIf="!msg.flashcards?.length">{{ msg.text }}</p>
           </div>
         </div>
       </div>
