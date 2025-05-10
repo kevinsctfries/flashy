@@ -1,0 +1,29 @@
+<div class="starter-container">
+  <h2>Start a New Conversation</h2>
+  <form (ngSubmit)="startSubject()" #starterForm="ngForm">
+    <div class="form-group">
+      <label for="subjectName">Subject Name</label>
+      <input
+        type="text"
+        id="subjectName"
+        [(ngModel)]="subjectName"
+        name="subjectName"
+        required
+        placeholder="e.g., World History"
+      />
+    </div>
+    <div class="form-group">
+      <label for="subjectDesc">Subject Description</label>
+      <textarea
+        id="subjectDesc"
+        [(ngModel)]="subjectDesc"
+        name="subjectDesc"
+        required
+        placeholder="Brief description of the subject..."
+      ></textarea>
+    </div>
+    <button type="submit" [disabled]="!starterForm.form.valid">
+      Start Conversation
+    </button>
+  </form>
+</div>

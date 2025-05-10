@@ -16,28 +16,47 @@ export interface ChatResponse {
   conversation_id: number;
 }
 
+export interface NewSubjectResponse {
+  conversation_id: number;
+  subject_name: string;
+  subject_desc: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class ChatService {
   private apiUrl = 'http://localhost:5000/api';
   private timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  private currentConversationId = 1; // temporarily set to 1
+  private currentConversationId: number | null = null;
 
   constructor(private http: HttpClient) {}
 
-  getConversation(): Observable<ChatMessage[]> {
+  getConversation(id: number): Observable<ChatMessage[]> {
     return this.http.get<ChatMessage[]>(
-      `${this.apiUrl}/chat/conversation/${this.currentConversationId}`
+      `${this.apiUrl}/chat/conversation/${id}`
     );
   }
 
-  sendMessage(message: string): Observable<ChatResponse> {
+  sendMessage(
+    message: string,
+    conversationId: number
+  ): Observable<ChatResponse> {
+    return this.http.post<ChatResponse>(`${this.apiUrl}/chat`, {
+      message,
+      timezone: this.timezone,
+      conversation_id: conversationId,
+    });
+  }
+
+  startNewSubject(
+    subjectName: string,
+    subjectDesc: string
+  ): Observable<NewSubjectResponse> {
     return this.http
-      .post<ChatResponse>(`${this.apiUrl}/chat`, {
-        message,
-        timezone: this.timezone,
-        conversation_id: this.currentConversationId,
+      .post<NewSubjectResponse>(`${this.apiUrl}/chat/new`, {
+        subject_name: subjectName,
+        subject_desc: subjectDesc,
       })
       .pipe(
         tap((response) => {

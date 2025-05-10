@@ -1,0 +1,49 @@
+.starter-container {
+    max-width: 500px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: var(--secondary-color);
+    border-radius: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    background: var(--background-color);
+    color: var(--text-color);
+}
+
+textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+button {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--primary-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+
+    &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+}

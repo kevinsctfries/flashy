@@ -1,0 +1,67 @@
+<div class="messages-container">
+  <div class="scroller-content">
+    <div
+      class="message-wrapper"
+      *ngFor="let msg of chronologicalMessages"
+      [ngClass]="msg.type === 'sent' ? 'sent-wrapper' : 'received-wrapper'"
+    >
+      <span class="timestamp" *ngIf="msg.type === 'sent'">
+        <div class="time">{{ msg.timestamp | date : "h:mm a" }}</div>
+        <div class="date">{{ msg.timestamp | date : "MMM d, y" }}</div>
+      </span>
+
+      <div
+        class="message"
+        [ngClass]="msg.type === 'sent' ? 'sent-message' : 'received-message'"
+      >
+        <!-- For sent messages -->
+        <div *ngIf="msg.type === 'sent'">{{ msg.text }}</div>
+
+        <!-- For received messages with flashcards -->
+        <div *ngIf="msg.type === 'received'" class="flashcard-container">
+          <ng-container *ngIf="msg.flashcards">
+            <div class="flashcard-pair" *ngFor="let card of msg.flashcards">
+              <div class="question" [innerHTML]="card.question"></div>
+              <div class="answer" [innerHTML]="card.answer"></div>
+            </div>
+          </ng-container>
+          <div *ngIf="!msg.flashcards" [innerHTML]="msg.text"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="input-section">
+  <div class="input-wrapper">
+    <input
+      type="text"
+      class="message-input"
+      placeholder="Type your message..."
+      [(ngModel)]="message"
+      (keydown.enter)="sendMessage($event)"
+    />
+    <button
+      class="send-button"
+      type="submit"
+      title="Send message"
+      (click)="sendMessage($event)"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        fill="currentColor"
+        viewBox="0 0 24 24"
+        class="send-icon"
+      >
+        <path d="M4 20l16-8L4 4v6l10 2-10 2z" />
+      </svg>
+    </button>
+  </div>
+
+  <label for="file-upload" class="upload-button">
+    <span>Upload</span>
+    <input type="file" id="file-upload" class="file-input" />
+  </label>
+</div>
