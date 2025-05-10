@@ -1,59 +1,94 @@
 # Flashy
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.9.
+Flashy is an AI-powered flashcard generator that helps you learn and retain information more efficiently. Upload text or documents and get instant flashcards—perfect for students, educators, and lifelong learners.
 
-## Development server
+---
 
-To start a local development server, run:
+## Features
+
+- AI-generated questions and answers
+- Flashcard-style interface for easy review
+- Responsive and modern UI built with Angular
+- Lightweight backend using Flask
+
+---
+
+## Tech Stack
+
+- **Frontend:** Angular
+- **Backend:** Flask (Python)
+- **Styling:** SCSS with CSS variables for dark/light mode
+
+---
+
+## Project Structure
+
+```
+flashy/
+├── frontend/     # Angular app
+└── backend/      # Flask API
+```
+
+---
+
+## Getting Started
+
+### 1. Clone the repository
 
 ```bash
+git clone https://github.com/your-username/flashy.git
+cd flashy
+```
+
+### 2. Set up the backend (Flask)
+
+```bash
+cd backend
+python3 -m venv venv
+source venv/bin/activate     # or venv\Scripts\activate on Windows
+pip install -r requirements.txt
+flask run
+```
+
+> Ensure you have Python 3.8+ and Flask installed. Set any required environment variables if needed.
+
+### 3. Set up the frontend (Angular)
+
+In a separate terminal:
+
+```bash
+cd frontend
+npm install
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+> This will start the Angular app at [http://localhost:4200](http://localhost:4200)
 
-## Code scaffolding
+---
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Development Tips
 
-```bash
-ng generate component component-name
-```
+- Angular files live inside `/frontend/src/app`
+- Flask routes and logic live inside `/backend/app.py` (or similar)
+- Make sure CORS is enabled on the Flask server if testing frontend and backend separately
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
-```
+## License
 
-## Building
+MIT License
 
-To build the project run:
+---
 
-```bash
-ng build
-```
+## Future Features
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+- User authentication
+- Flashcard decks and tagging
+- Export to Anki or Quizlet
+- Enhanced NLP with summarization + QA pipelines
 
-## Running unit tests
+---
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## Built by Kevin Fries
 
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Open source and built with by a lifelong learner.
