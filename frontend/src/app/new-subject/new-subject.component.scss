@@ -1,49 +1,91 @@
 .starter-container {
     max-width: 500px;
-    margin: 2rem auto;
-    padding: 2rem;
+    margin: 3rem auto;
+    padding: 2.5rem 2rem;
     background: var(--secondary-color);
-    border-radius: 1rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
+    border-radius: 1.5rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.3s ease;
+    font-family: var(--font-family-base);
 
-.form-group {
-    margin-bottom: 1.5rem;
-}
+    &:hover {
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
 
-label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: var(--text-color);
-}
+    h2 {
+        margin-bottom: 2rem;
+        color: var(--text-color);
+        font-size: var(--font-size-xl);
+        font-weight: 600;
+        text-align: center;
+        user-select: none;
+    }
 
-input,
-textarea {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid var(--border-color);
-    border-radius: 0.5rem;
-    background: var(--background-color);
-    color: var(--text-color);
-}
+    .form-group {
+        margin-bottom: 2rem;
 
-textarea {
-    min-height: 100px;
-    resize: vertical;
-}
+        label {
+            display: block;
+            margin-bottom: 0.75rem;
+            color: var(--text-color-secondary);
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+            user-select: none;
+        }
 
-button {
-    width: 100%;
-    padding: 0.75rem;
-    background: var(--primary-color);
-    color: var(--text-color);
-    border: none;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    font-weight: 600;
+        input,
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid var(--scrollbar-thumb);
+            border-radius: 0.75rem;
+            background: var(--background-color);
+            color: var(--text-color);
+            font-size: var(--font-size-base);
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
 
-    &:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
+            &:focus {
+                outline: none;
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.4);
+            }
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+    }
+
+    button {
+        width: 100%;
+        padding: 1rem;
+        background: var(--button-background);
+        color: var(--text-color);
+        border: none;
+        border-radius: 0.75rem;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: var(--font-size-base);
+        letter-spacing: 0.5px;
+        transition:
+            background 0.3s ease,
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+        user-select: none;
+
+        &:hover:not(:disabled) {
+            background: var(--button-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
     }
 }
