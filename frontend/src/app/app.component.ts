@@ -1,21 +1,25 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { RouterModule, RouterOutlet } from '@angular/router';
+import { ChatService, Subject } from './services/chat.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, RouterOutlet],
+  imports: [CommonModule, RouterModule, RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
   userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   title = 'flashy';
+  subjects: Subject[] = [];
+
+  constructor(private chatService: ChatService) {}
 
   ngOnInit(): void {
     this.initializeSidebar();
+    this.loadSubjects();
   }
 
   private initializeSidebar(): void {
@@ -56,5 +60,16 @@ export class AppComponent implements OnInit {
         localStorage.setItem('sidebarOpen', 'true');
       }
     }
+  }
+
+  private loadSubjects() {
+    this.chatService.getSubjects().subscribe({
+      next: (subjects) => {
+        this.subjects = subjects;
+      },
+      error: (error) => {
+        console.error('Error loading subjects:', error);
+      },
+    });
   }
 }

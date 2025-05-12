@@ -5,21 +5,11 @@
       <div class="nav-section">
         <h2 class="section-title">Subjects</h2>
         <ul class="nav-list">
-          <li class="nav-item">
-            <span class="nav-icon">📚</span>
-            <span>Mathematics</span>
-          </li>
-          <li class="nav-item">
-            <span class="nav-icon">🧬</span>
-            <span>Biology</span>
-          </li>
-          <li class="nav-item">
-            <span class="nav-icon">⚡</span>
-            <span>Physics</span>
-          </li>
-          <li class="nav-item">
-            <span class="nav-icon">🧪</span>
-            <span>Chemistry</span>
+          <li class="nav-item" *ngFor="let subject of subjects">
+            <a [routerLink]="['/chat', subject.id]" class="nav-link">
+              <span class="nav-icon">📚</span>
+              <span>{{ subject.subject_name }}</span>
+            </a>
           </li>
         </ul>
       </div>

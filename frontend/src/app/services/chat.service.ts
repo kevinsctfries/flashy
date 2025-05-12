@@ -22,6 +22,12 @@ export interface NewSubjectResponse {
   subject_desc: string;
 }
 
+export interface Subject {
+  id: number;
+  subject_name: string;
+  subject_desc: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -63,5 +69,9 @@ export class ChatService {
           this.currentConversationId = response.conversation_id;
         })
       );
+  }
+
+  getSubjects(): Observable<Subject[]> {
+    return this.http.get<Subject[]>(`${this.apiUrl}/subjects`);
   }
 }

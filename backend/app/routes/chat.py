@@ -124,3 +124,20 @@ def new_conversation():
         'subject_name': subject_name,
         'subject_desc': subject_desc
     })
+
+@chat_bp.route('/subjects', methods=['GET'])
+def get_subjects():
+    subjects = Chat.query.distinct(Chat.id, Chat.subject_name, Chat.subject_desc).all()
+    unique_subjects = []
+    seen_ids = set()
+    
+    for subject in subjects:
+        if subject.id not in seen_ids:
+            unique_subjects.append({
+                'id': subject.id,
+                'subject_name': subject.subject_name,
+                'subject_desc': subject.subject_desc
+            })
+            seen_ids.add(subject.id)
+    
+    return jsonify(unique_subjects)

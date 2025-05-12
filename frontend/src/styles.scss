@@ -114,6 +114,21 @@ body {
     }
 }
 
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: var(--text-color);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+
+    &:hover {
+        background-color: var(--secondary-color);
+    }
+}
+
 .main {
     flex: 1;
     display: flex;
