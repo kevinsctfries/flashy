@@ -1,3 +1,5 @@
+⚠️ **Notice: This project is currently under active development.** ⚠️
+
 # Flashy
 
 Flashy is an AI-powered flashcard generator that helps you learn and retain information more efficiently. Upload text or documents and get instant flashcards—perfect for students, educators, and lifelong learners.
@@ -17,7 +19,6 @@ Flashy is an AI-powered flashcard generator that helps you learn and retain info
 
 - **Frontend:** Angular
 - **Backend:** Flask (Python)
-- **Styling:** SCSS with CSS variables for dark/light mode
 
 ---
 
