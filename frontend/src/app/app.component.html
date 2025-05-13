@@ -1,7 +1,6 @@
 <div class="app-container">
   <aside class="sidebar" id="mySidebar">
     <nav class="sidebar-nav">
-      <!-- placeholder stuff -->
       <div class="nav-section">
         <h2 class="section-title">Subjects</h2>
         <ul class="nav-list">
@@ -10,6 +9,34 @@
               <span class="nav-icon">📚</span>
               <span>{{ subject.subject_name }}</span>
             </a>
+            <button
+              class="delete-btn"
+              (click)="deleteSubject(subject.id)"
+              aria-label="Delete subject"
+            >
+              <span class="delete-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path
+                    d="M19 6L18.293 19.293C18.2295 20.1256 17.5098 20.75 16.675 20.75H7.325C6.49018 20.75 5.77049 20.1256 5.707 19.293L5 6"
+                  ></path>
+                  <path d="M10 11V17"></path>
+                  <path d="M14 11V17"></path>
+                  <path
+                    d="M8 6V4C8 3.44772 8.44772 3 9 3H15C15.5523 3 16 3.44772 16 4V6"
+                  ></path>
+                </svg>
+              </span>
+            </button>
           </li>
         </ul>
       </div>

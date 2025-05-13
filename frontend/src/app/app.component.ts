@@ -72,4 +72,9 @@ export class AppComponent implements OnInit {
       },
     });
   }
+
+  deleteSubject(id: number) {
+    console.log('Delete subject:', id);
+    // TODO: Implement actual delete functionality
+  }
 }
