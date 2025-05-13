@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, RouterOutlet } from '@angular/router';
+import { RouterModule, RouterOutlet, Router } from '@angular/router';
 import { ChatService, Subject } from './services/chat.service';
+import { DeleteBoxComponent } from './delete-box/delete-box.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterModule, RouterOutlet],
+  imports: [CommonModule, RouterModule, RouterOutlet, DeleteBoxComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
@@ -14,8 +15,10 @@ export class AppComponent implements OnInit {
   userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   title = 'flashy';
   subjects: Subject[] = [];
+  showDeleteDialog = false;
+  subjectToDelete: number | null = null;
 
-  constructor(private chatService: ChatService) {}
+  constructor(private chatService: ChatService, private router: Router) {}
 
   ngOnInit(): void {
     this.initializeSidebar();
@@ -74,7 +77,33 @@ export class AppComponent implements OnInit {
   }
 
   deleteSubject(id: number) {
-    console.log('Delete subject:', id);
-    // TODO: Implement actual delete functionality
+    this.subjectToDelete = id;
+    this.showDeleteDialog = true;
+  }
+
+  handleDeleteConfirm() {
+    if (this.subjectToDelete) {
+      this.chatService.deleteSubject(this.subjectToDelete).subscribe({
+        next: () => {
+          this.subjects = this.subjects.filter(
+            (subject) => subject.id !== this.subjectToDelete
+          );
+          if (this.router.url === `/chat/${this.subjectToDelete}`) {
+            this.router.navigate(['/']);
+          }
+          this.showDeleteDialog = false;
+          this.subjectToDelete = null;
+        },
+        error: (error) => {
+          console.error('Error deleting subject:', error);
+          alert('Failed to delete subject. Please try again.');
+        },
+      });
+    }
+  }
+
+  handleDeleteCancel() {
+    this.showDeleteDialog = false;
+    this.subjectToDelete = null;
   }
 }

@@ -1,0 +1,92 @@
+@use "sass:color";
+
+.dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.dialog-content {
+    background-color: var(--background-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    width: 500px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: slideIn 0.2s ease-out;
+
+    h2 {
+        margin: 0 0 1rem;
+        color: var(--text-color);
+        font-size: var(--font-size-lg);
+        text-align: center;
+    }
+
+    p {
+        margin: 0 0 1.5rem;
+        color: var(--text-color);
+        font-size: var(--font-size-base);
+        line-height: 1.5;
+        text-align: center;
+    }
+}
+
+.dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+
+    button {
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+        font-weight: 500;
+        border: none;
+        font-size: var(--font-size-base);
+        color: var(--text-color);
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &.cancel-btn {
+            background-color: var(--secondary-color);
+
+            &:hover {
+                background-color: color.adjust(#2d3748, $lightness: 10%);
+            }
+        }
+
+        &.confirm-btn {
+            background-color: #dc3545;
+
+            &:hover {
+                background-color: color.adjust(#dc3545, $lightness: -10%);
+            }
+        }
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

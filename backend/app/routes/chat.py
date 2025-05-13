@@ -141,3 +141,19 @@ def get_subjects():
             seen_ids.add(subject.id)
     
     return jsonify(unique_subjects)
+
+@chat_bp.route('/subjects/<int:subject_id>', methods=['DELETE'])
+def delete_subject(subject_id):
+    try:
+        # Delete all messages for this subject
+        messages = Chat.query.filter_by(id=subject_id).all()
+        for message in messages:
+            db.session.delete(message)
+        
+        db.session.commit()
+        return '', 204
+        
+    except Exception as e:
+        print(f"Error deleting subject: {e}")
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500

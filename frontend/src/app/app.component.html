@@ -87,3 +87,9 @@
     <router-outlet></router-outlet>
   </main>
 </div>
+
+<app-delete-box
+  [isOpen]="showDeleteDialog"
+  (confirm)="handleDeleteConfirm()"
+  (cancelDelete)="handleDeleteCancel()"
+></app-delete-box>

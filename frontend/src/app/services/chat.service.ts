@@ -74,4 +74,8 @@ export class ChatService {
   getSubjects(): Observable<Subject[]> {
     return this.http.get<Subject[]>(`${this.apiUrl}/subjects`);
   }
+
+  deleteSubject(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/subjects/${id}`);
+  }
 }
