@@ -16,11 +16,7 @@ export class HomeComponent implements OnInit {
   constructor(private chatService: ChatService) {}
 
   ngOnInit(): void {
-    this.loadSubjects();
-  }
-
-  private loadSubjects() {
-    this.chatService.getSubjects().subscribe({
+    this.chatService.subjects$.subscribe({
       next: (subjects) => {
         this.subjects = subjects;
       },
@@ -28,5 +24,6 @@ export class HomeComponent implements OnInit {
         console.error('Error loading subjects:', error);
       },
     });
+    this.chatService.getSubjects();
   }
 }

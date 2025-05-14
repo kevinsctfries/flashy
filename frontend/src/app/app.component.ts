@@ -22,7 +22,15 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeSidebar();
-    this.loadSubjects();
+    this.chatService.subjects$.subscribe({
+      next: (subjects) => {
+        this.subjects = subjects;
+      },
+      error: (error) => {
+        console.error('Error loading subjects:', error);
+      },
+    });
+    this.chatService.getSubjects();
   }
 
   private initializeSidebar(): void {
@@ -63,17 +71,6 @@ export class AppComponent implements OnInit {
         localStorage.setItem('sidebarOpen', 'true');
       }
     }
-  }
-
-  private loadSubjects() {
-    this.chatService.getSubjects().subscribe({
-      next: (subjects) => {
-        this.subjects = subjects;
-      },
-      error: (error) => {
-        console.error('Error loading subjects:', error);
-      },
-    });
   }
 
   deleteSubject(id: number) {

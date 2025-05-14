@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 export interface ChatMessage {
@@ -35,6 +35,8 @@ export class ChatService {
   private apiUrl = 'http://localhost:5000/api';
   private timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   private currentConversationId: number | null = null;
+  private subjectsSource = new BehaviorSubject<Subject[]>([]);
+  subjects$ = this.subjectsSource.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -55,6 +57,14 @@ export class ChatService {
     });
   }
 
+  getSubjects(): Observable<Subject[]> {
+    this.http.get<Subject[]>(`${this.apiUrl}/subjects`).subscribe({
+      next: (subjects) => this.subjectsSource.next(subjects),
+      error: (error) => console.error('Error fetching subjects:', error),
+    });
+    return this.subjects$;
+  }
+
   startNewSubject(
     subjectName: string,
     subjectDesc: string
@@ -65,17 +75,16 @@ export class ChatService {
         subject_desc: subjectDesc,
       })
       .pipe(
+        tap(() => this.getSubjects()), // refreshes subjects after creating new one
         tap((response) => {
           this.currentConversationId = response.conversation_id;
         })
       );
   }
 
-  getSubjects(): Observable<Subject[]> {
-    return this.http.get<Subject[]>(`${this.apiUrl}/subjects`);
-  }
-
   deleteSubject(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/subjects/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/subjects/${id}`).pipe(
+      tap(() => this.getSubjects()) // refreshes subjects after deletion
+    );
   }
 }
