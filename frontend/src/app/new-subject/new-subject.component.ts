@@ -17,7 +17,7 @@ export class NewSubjectComponent {
   constructor(private chatService: ChatService) {}
 
   startSubject() {
-    if (this.subjectName && this.subjectDesc) {
+    if (this.subjectName) {
       this.chatService
         .startNewSubject(this.subjectName, this.subjectDesc)
         .subscribe({

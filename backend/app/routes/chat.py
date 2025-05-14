@@ -96,34 +96,41 @@ def get_conversation(conversation_id):
 
 @chat_bp.route('/chat/new', methods=['POST'])
 def new_conversation():
-    data = request.get_json()
-    subject_name = data.get('subject_name')
-    subject_desc = data.get('subject_desc')
+    try:
+        data = request.get_json()
+
+        subject_name = data.get('subject_name')
+        subject_desc = data.get('subject_desc', '') # Empty string if subject_desc is not provided
     
-    if not subject_name or not subject_desc:
-        return jsonify({'error': 'Subject name and description are required'}), 400
+        if not subject_name:
+            return jsonify({'error': 'Subject name is required'}), 400
     
-    latest_chat = Chat.query.order_by(Chat.id.desc()).first()
-    new_id = (latest_chat.id + 1) if latest_chat else 1
+        latest_chat = Chat.query.order_by(Chat.id.desc()).first()
+        new_id = (latest_chat.id + 1) if latest_chat else 1
     
-    chat = Chat(
-        id=new_id,
-        message_id=1,
-        message="Conversation started",
-        response="Welcome to your new study session!",
-        created_at=datetime.now(ZoneInfo('UTC')),
-        subject_name=subject_name,
-        subject_desc=subject_desc
-    )
+        chat = Chat(
+            id=new_id,
+            message_id=1,
+            message="Conversation started",
+            response="Welcome to your new study session!",
+            created_at=datetime.now(ZoneInfo('UTC')),
+            subject_name=subject_name,
+            subject_desc=subject_desc # will be empty if not provided
+        )
     
-    db.session.add(chat)
-    db.session.commit()
+        db.session.add(chat)
+        db.session.commit()
     
-    return jsonify({
-        'conversation_id': new_id,
-        'subject_name': subject_name,
-        'subject_desc': subject_desc
-    })
+        return jsonify({
+            'conversation_id': new_id,
+            'subject_name': subject_name,
+            'subject_desc': subject_desc
+        })
+
+    except Exception as e:
+        print(f"Error creating new conversation: {e}")
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 @chat_bp.route('/subjects', methods=['GET'])
 def get_subjects():
