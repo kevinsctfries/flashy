@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ChatService, Subject } from '../services/chat.service';
@@ -10,8 +16,11 @@ import { ChatService, Subject } from '../services/chat.service';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit {
   subjects: Subject[] = [];
+
+  @ViewChild('flashcardContainer', { static: false })
+  flashcardContainer!: ElementRef<HTMLDivElement>;
 
   constructor(private chatService: ChatService) {}
 
@@ -25,5 +34,9 @@ export class HomeComponent implements OnInit {
       },
     });
     this.chatService.getSubjects();
+  }
+
+  ngAfterViewInit(): void {
+    console.log('Flashcards created');
   }
 }

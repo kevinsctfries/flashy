@@ -1,25 +1,27 @@
 <div class="home-container">
-  <section class="hero">
-    <h1>Welcome to Flashy</h1>
-    <p class="subtitle">AI-Powered Flashcards for Smarter Learning</p>
-    <button class="cta-button" routerLink="/new-subject">
-      Create A Subject
-    </button>
-  </section>
+  <div>
+    <section class="hero">
+      <h1>Welcome to Flashy</h1>
+      <p class="subtitle">AI-Powered Flashcards for Smarter Learning</p>
+      <button class="cta-button" routerLink="/new-subject">
+        Create A Subject
+      </button>
+    </section>
 
-  <section class="subjects">
-    <h2>Your Subjects</h2>
-    <div class="subject-grid">
-      <div
-        *ngFor="let subject of subjects"
-        [routerLink]="['/chat', subject.id]"
-        class="subject-card"
-      >
-        <h3>{{ subject.subject_name }}</h3>
-        <p>
-          {{ subject.subject_desc }}
-        </p>
+    <section class="subjects">
+      <h2>Your Subjects</h2>
+      <div class="subject-grid">
+        <div
+          *ngFor="let subject of subjects"
+          [routerLink]="['/chat', subject.id]"
+          class="subject-card"
+        >
+          <h3>{{ subject.subject_name }}</h3>
+          <p>
+            {{ subject.subject_desc }}
+          </p>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 </div>
