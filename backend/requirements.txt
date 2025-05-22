@@ -1,0 +1,11 @@
+# Core ML/AI
+transformers
+torch
+
+# NLP
+nltk
+
+# Flask
+flask
+flask_sqlalchemy
+flask_cors
