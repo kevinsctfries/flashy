@@ -5,18 +5,17 @@ from flask_cors import CORS
 
 db = SQLAlchemy()
 
-def create_app():
+def create_app(config=Config):
     app = Flask(__name__)
-    app.config.from_object(Config)
-
-    # Update CORS configuration with explicit options
     CORS(app, resources={
         r"/api/*": {
             "origins": ["http://localhost:4200"],
-            "methods": ["GET", "POST", "OPTIONS"],
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             "allow_headers": ["Content-Type"]
         }
     })
+
+    app.config.from_object(Config)
 
     db.init_app(app)
 

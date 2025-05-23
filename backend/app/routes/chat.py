@@ -1,6 +1,7 @@
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from flask import Blueprint, request, jsonify
+from flask_cors import cross_origin  # Add this import
 from app import db
 from app.models.chat import Chat
 from app.models.model_loader import generate_flashcards, initialize_model, check_model_downloaded
@@ -163,8 +164,12 @@ def get_subjects():
         print(f"Error getting subjects: {e}")
         return jsonify({'error': str(e)}), 500
 
-@chat_bp.route('/subjects/<int:subject_id>', methods=['DELETE'])
+@chat_bp.route('/subjects/<int:subject_id>', methods=['DELETE', 'OPTIONS'])
+@cross_origin(methods=['DELETE', 'OPTIONS'])
 def delete_subject(subject_id):
+    if request.method == 'OPTIONS':
+        return '', 204
+        
     try:
         # Delete all messages for this subject
         messages = Chat.query.filter_by(id=subject_id).all()
