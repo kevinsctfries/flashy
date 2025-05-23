@@ -80,12 +80,14 @@
   <main class="main" id="main">
     <div class="header">
       <button class="openbtn" (click)="openNav()">☰</button>
-      <button class="download-model" (click)="openDownloadMenu()">
-        Download Model
-      </button>
-      <h1 class="header-title">
-        <a routerLink="/" class="header-link">Flashy</a>
-      </h1>
+      <div class="header-right">
+        <button class="download-model" (click)="openDownloadMenu()">
+          Download Model
+        </button>
+        <h1 class="header-title">
+          <a routerLink="/" class="header-link">Flashy</a>
+        </h1>
+      </div>
     </div>
     <router-outlet></router-outlet>
   </main>

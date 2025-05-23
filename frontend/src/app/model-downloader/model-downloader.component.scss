@@ -9,32 +9,64 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
-}
 
-.model-dialog {
-    background: black;
-    padding: 24px;
-    border-radius: 8px;
-    min-width: 400px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
+    .model-dialog {
+        background: var(--background-color);
+        padding: 2rem;
+        border-radius: 8px;
+        min-width: 400px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 
-.progress-container {
-    margin: 20px 0;
-}
+        h2 {
+            user-select: none;
+        }
 
-.actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    margin-top: 20px;
-}
+        p {
+            margin: 1rem 0;
+        }
 
-.error-message {
-    color: #f44336;
-    background-color: rgba(244, 67, 54, 0.1);
-    padding: 12px;
-    border-radius: 4px;
-    margin: 12px 0;
-    font-weight: 500;
+        .progress-container {
+            margin: 2rem 0;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 20px;
+
+            button {
+                padding: 0.5rem 0.75rem;
+                background-color: var(--button-background);
+                color: var(--text-color);
+                border-radius: 8px;
+                border: none;
+                cursor: pointer;
+                font-weight: 500;
+                transition: background-color 0.2s ease-in-out;
+                user-select: none;
+            }
+
+            .cancel-button {
+                &:hover {
+                    background-color: var(--button-hover);
+                }
+            }
+
+            .download-button {
+                &:hover {
+                    background-color: var(--button-hover);
+                }
+            }
+        }
+
+        .error-message {
+            color: #f44336;
+            background-color: rgba(244, 67, 54, 0.1);
+            padding: 12px;
+            border-radius: 4px;
+            margin: 12px 0;
+            font-weight: 500;
+        }
+    }
 }
