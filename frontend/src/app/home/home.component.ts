@@ -33,7 +33,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
         console.error('Error loading subjects:', error);
       },
     });
-    this.chatService.getSubjects();
   }
 
   ngAfterViewInit(): void {

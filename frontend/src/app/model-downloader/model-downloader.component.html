@@ -1,0 +1,36 @@
+<div class="model-dialog-overlay" *ngIf="showDialog">
+  <div class="model-dialog">
+    <h2>Download Required Model</h2>
+    <p>
+      The application requires a machine learning model to function. Would you
+      like to download it now? (Size: ~2GB)
+    </p>
+
+    <!-- Add error message display -->
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <div class="progress-container" *ngIf="downloading">
+      <mat-progress-bar
+        mode="determinate"
+        [value]="progress"
+      ></mat-progress-bar>
+      <p>{{ progress.toFixed(1) }}% Complete</p>
+    </div>
+
+    <div class="actions">
+      <button mat-button [disabled]="downloading" (click)="cancel()">
+        Cancel
+      </button>
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="downloading"
+        (click)="startDownload()"
+      >
+        {{ downloading ? "Downloading..." : "Download" }}
+      </button>
+    </div>
+  </div>
+</div>

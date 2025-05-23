@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, BehaviorSubject, throwError } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
 
 export interface ChatMessage {
   text: string;
@@ -58,11 +58,14 @@ export class ChatService {
   }
 
   getSubjects(): Observable<Subject[]> {
-    this.http.get<Subject[]>(`${this.apiUrl}/subjects`).subscribe({
-      next: (subjects) => this.subjectsSource.next(subjects),
-      error: (error) => console.error('Error fetching subjects:', error),
-    });
-    return this.subjects$;
+    return this.http.get<Subject[]>(`${this.apiUrl}/subjects`).pipe(
+      tap((subjects) => this.subjectsSource.next(subjects)),
+      catchError((error) => {
+        // Don't update subjects if there's an error
+        console.error('Error fetching subjects:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   startNewSubject(

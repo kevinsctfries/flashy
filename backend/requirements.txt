@@ -9,3 +9,7 @@ nltk
 flask
 flask_sqlalchemy
 flask_cors
+
+tqdm
+
+fastapi
