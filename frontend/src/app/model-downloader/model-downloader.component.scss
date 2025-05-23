@@ -34,30 +34,6 @@
             justify-content: flex-end;
             gap: 8px;
             margin-top: 20px;
-
-            button {
-                padding: 0.5rem 0.75rem;
-                background-color: var(--button-background);
-                color: var(--text-color);
-                border-radius: 8px;
-                border: none;
-                cursor: pointer;
-                font-weight: 500;
-                transition: background-color 0.2s ease-in-out;
-                user-select: none;
-            }
-
-            .cancel-button {
-                &:hover {
-                    background-color: var(--button-hover);
-                }
-            }
-
-            .download-button {
-                &:hover {
-                    background-color: var(--button-hover);
-                }
-            }
         }
 
         .error-message {

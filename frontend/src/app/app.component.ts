@@ -87,7 +87,7 @@ export class AppComponent implements OnInit {
   openNav() {
     const sidebar = document.getElementById('mySidebar');
     const main = document.getElementById('main');
-    const button = document.querySelector('.openbtn') as HTMLElement;
+    const button = document.querySelector('.button') as HTMLElement;
 
     if (sidebar && main && button) {
       const isOpen = sidebar.style.left === '0px';

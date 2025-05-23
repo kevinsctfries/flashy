@@ -26,20 +26,17 @@
                 margin-bottom: 2rem;
             }
 
-            .cta-button {
+            .button {
                 padding: 1rem 2rem;
                 font-size: 1.125rem;
                 background-color: var(--primary-color);
                 color: var(--text-color);
-                border: none;
-                border-radius: 8px;
-                cursor: pointer;
                 transition: all 0.2s ease;
                 box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 
                 &:hover {
                     background-color: var(--primary-alt-color);
-                    transform: translateY(-2px);
+                    transform: translateY(-5px);
                 }
             }
         }
@@ -64,7 +61,7 @@
             .subject-card {
                 background-color: var(--secondary-color);
                 padding: 2rem;
-                border-radius: 12px;
+                border-radius: 8px;
                 text-align: center;
                 transition: transform 0.2s ease;
                 box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);

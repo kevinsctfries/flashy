@@ -69,25 +69,7 @@
         }
     }
 
-    .upload-button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.5rem 0.75rem;
-        background-color: var(--button-background);
-        color: var(--text-color);
-        border-radius: 8px;
-        cursor: pointer;
+    .button {
         font-weight: 500;
-        transition: background-color 0.2s ease-in-out;
-        user-select: none;
-
-        &:hover {
-            background-color: var(--button-hover);
-        }
-
-        .file-input {
-            display: none;
-        }
     }
 }

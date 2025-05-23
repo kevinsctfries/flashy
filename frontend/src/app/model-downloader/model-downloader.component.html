@@ -6,7 +6,6 @@
       like to download it now? (Size: ~3GB)
     </p>
 
-    <!-- Add error message display -->
     <div class="error-message" *ngIf="errorMessage">
       {{ errorMessage }}
     </div>
@@ -20,14 +19,10 @@
     </div>
 
     <div class="actions">
-      <button class="cancel-button" [disabled]="downloading" (click)="cancel()">
+      <button class="button" [disabled]="downloading" (click)="cancel()">
         Cancel
       </button>
-      <button
-        class="download-button"
-        [disabled]="downloading"
-        (click)="startDownload()"
-      >
+      <button class="button" [disabled]="downloading" (click)="startDownload()">
         {{ downloading ? "Downloading..." : "Download" }}
       </button>
     </div>
