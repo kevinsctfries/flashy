@@ -62,14 +62,14 @@ export class AppComponent implements OnInit {
   private initializeSidebar(): void {
     const sidebar = document.getElementById('mySidebar');
     const main = document.getElementById('main');
-    const button = document.querySelector('.openbtn') as HTMLElement;
+    const button = document.querySelector('.button') as HTMLElement;
     const isOpen = localStorage.getItem('sidebarOpen') !== 'false';
 
     if (sidebar && main && button) {
       if (isOpen) {
         sidebar.style.left = '0';
         main.style.marginLeft = '250px';
-        button.style.left = '1rem';
+        button.style.left = '250px';
       } else {
         sidebar.style.left = '-250px';
         main.style.marginLeft = '0';
@@ -90,7 +90,9 @@ export class AppComponent implements OnInit {
     const button = document.querySelector('.button') as HTMLElement;
 
     if (sidebar && main && button) {
-      const isOpen = sidebar.style.left === '0px';
+      // checks local storage for sidebar state
+      const isOpen = localStorage.getItem('sidebarOpen') !== 'false';
+
       if (isOpen) {
         sidebar.style.left = '-250px';
         main.style.marginLeft = '0';
@@ -99,7 +101,6 @@ export class AppComponent implements OnInit {
       } else {
         sidebar.style.left = '0';
         main.style.marginLeft = '250px';
-        button.style.left = '1rem';
         localStorage.setItem('sidebarOpen', 'true');
       }
     }
