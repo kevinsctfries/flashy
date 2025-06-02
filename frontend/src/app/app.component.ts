@@ -69,7 +69,7 @@ export class AppComponent implements OnInit {
       if (isOpen) {
         sidebar.style.left = '0';
         main.style.marginLeft = '250px';
-        button.style.left = '250px';
+        button.style.left = '1rem';
       } else {
         sidebar.style.left = '-250px';
         main.style.marginLeft = '0';
