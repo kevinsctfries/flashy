@@ -90,7 +90,19 @@ export class ModelDownloaderComponent implements OnInit {
   }
 
   cancel() {
-    if (!this.downloading) {
+    if (this.downloading) {
+      this.modelService.cancelDownload().subscribe({
+        next: (response) => {
+          console.log('Cancel request sent:', response);
+          this.downloading = false;
+          this.showDialog = false;
+        },
+        error: (error) => {
+          console.error('Error canceling download:', error);
+          this.errorMessage = 'Failed to cancel download';
+        },
+      });
+    } else {
       this.showDialog = false;
     }
   }

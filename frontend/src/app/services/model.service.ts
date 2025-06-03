@@ -15,6 +15,10 @@ export interface ModelProgress {
   error_message?: string;
 }
 
+export interface ModelCancelResponse {
+  status: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -43,5 +47,16 @@ export class ModelService {
 
   getProgress(): Observable<ModelProgress> {
     return this.http.get<ModelProgress>(`${this.apiUrl}/model/progress`);
+  }
+
+  cancelDownload(): Observable<ModelCancelResponse> {
+    return this.http
+      .post<ModelCancelResponse>(`${this.apiUrl}/model/cancel`, {})
+      .pipe(
+        catchError((error) => {
+          console.error('Error canceling download:', error);
+          return throwError(() => error);
+        })
+      );
   }
 }

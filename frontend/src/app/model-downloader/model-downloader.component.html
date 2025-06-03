@@ -16,9 +16,7 @@
     </div>
 
     <div class="actions">
-      <button class="button" [disabled]="downloading" (click)="cancel()">
-        Cancel
-      </button>
+      <button class="button" (click)="cancel()">Cancel</button>
       <button class="button" [disabled]="downloading" (click)="startDownload()">
         {{ downloading ? "Downloading..." : "Download" }}
       </button>

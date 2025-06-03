@@ -9,11 +9,23 @@ MODEL_NAME = "potsawee/t5-large-generation-squad-QuestionAnswer"
 
 class ModelDownloadStatus:
     def __init__(self):
-        self.progress = 0
-        self.total = 0
         self.status = "idle"
         self.error_message = None
-        self.requires_token = False
+        self.canceled = False
+
+    def cancel(self):
+        print("Setting download status to canceled")
+        self.canceled = True
+        self.status = "canceled"
+        self.error_message = "Download canceled"
+        try:
+            model_path = os.path.join(MODEL_DIR, MODEL_NAME.split('/')[-1])
+            if os.path.exists(model_path):
+                import shutil
+                shutil.rmtree(model_path)
+                print(f"Cleaned up partial downloads at: {model_path}")
+        except Exception as e:
+            print(f"Error cleaning up downloads: {e}")
 
 download_status = ModelDownloadStatus()
 qa_tokenizer = None
@@ -75,12 +87,15 @@ def check_model_downloaded():
 def download_model(token: str = None):
     global download_status, qa_tokenizer, qa_model
     download_status.status = "downloading"
+    download_status.canceled = False
     
-    # Use custom model directory instead of cache
     model_path = os.path.join(MODEL_DIR, MODEL_NAME.split('/')[-1])
     os.makedirs(model_path, exist_ok=True)
     
     try:
+        if download_status.canceled:
+            return False
+            
         # Set environment variables for download
         os.environ['TRANSFORMERS_CACHE'] = model_path
         os.environ['HF_HOME'] = model_path
@@ -90,17 +105,26 @@ def download_model(token: str = None):
         print("Starting model download...")
         print(f"Downloading to: {model_path}")
         
+        if download_status.canceled:
+            return False
+            
         # First download and save tokenizer explicitly
         qa_tokenizer = AutoTokenizer.from_pretrained(
             MODEL_NAME,
-            use_fast=True,  # Changed to True to generate tokenizer.json
+            use_fast=True,
             local_files_only=False,
             force_download=True
         )
         
+        if download_status.canceled:
+            return False
+            
         # Save tokenizer files to model path
         qa_tokenizer.save_pretrained(model_path)
         
+        if download_status.canceled:
+            return False
+            
         print("Tokenizer downloaded and saved, now downloading model...")
         
         # Now download the model
@@ -111,16 +135,15 @@ def download_model(token: str = None):
             use_safetensors=True
         )
         
+        if download_status.canceled:
+            return False
+            
         # Save model to the same path
         qa_model.save_pretrained(model_path, safe_serialization=True)
         
-        print(f"Model files saved to: {model_path}")
-        print("Verifying files...")
-        
-        # List all files in directory for debugging
-        print("Files in model directory:")
-        print('\n'.join(os.listdir(model_path)))
-        
+        if download_status.canceled:
+            return False
+            
         if check_model_downloaded():
             print("✓ All files verified successfully")
             download_status.status = "complete"
