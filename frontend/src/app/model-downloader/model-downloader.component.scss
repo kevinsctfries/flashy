@@ -26,7 +26,15 @@
         }
 
         .progress-container {
-            margin: 2rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+
+            p {
+                margin-top: 16px;
+                text-align: center;
+            }
         }
 
         .actions {

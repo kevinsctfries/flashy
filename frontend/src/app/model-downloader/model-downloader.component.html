@@ -11,11 +11,8 @@
     </div>
 
     <div class="progress-container" *ngIf="downloading">
-      <mat-progress-bar
-        mode="determinate"
-        [value]="progress"
-      ></mat-progress-bar>
-      <p>{{ progress.toFixed(1) }}% Complete</p>
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Downloading model... This may take a few minutes.</p>
     </div>
 
     <div class="actions">

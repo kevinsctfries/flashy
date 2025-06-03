@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ModelService, ModelProgress } from '../services/model.service';
 
 @Component({
   selector: 'app-model-downloader',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatProgressBarModule],
+  imports: [CommonModule, MatButtonModule, MatProgressSpinnerModule],
   templateUrl: './model-downloader.component.html',
   styleUrls: ['./model-downloader.component.scss'],
 })
@@ -16,12 +16,11 @@ export class ModelDownloaderComponent implements OnInit {
   downloading = false;
   progress = 0;
   errorMessage: string | null = null;
-  modelStatus = false; // Track if model is downloaded
+  modelStatus = false;
 
   constructor(private modelService: ModelService) {}
 
   ngOnInit() {
-    // Only check and store the model status, don't show dialog
     this.checkModelStatus();
   }
 
@@ -38,13 +37,11 @@ export class ModelDownloaderComponent implements OnInit {
   }
 
   private checkDownloadProgress() {
-    // Only check progress if we're actually downloading
     if (!this.downloading) return;
 
     const interval = setInterval(() => {
       this.modelService.getProgress().subscribe({
         next: (progress: ModelProgress) => {
-          this.progress = progress.progress;
           if (progress.status === 'complete') {
             this.downloading = false;
             this.showDialog = false;
@@ -66,7 +63,7 @@ export class ModelDownloaderComponent implements OnInit {
   }
 
   startDownload(token?: string) {
-    if (this.downloading) return; // Prevent multiple downloads
+    if (this.downloading) return;
 
     this.downloading = true;
     this.errorMessage = null;
@@ -99,7 +96,6 @@ export class ModelDownloaderComponent implements OnInit {
   }
 
   public openDialog() {
-    // Only show dialog if model isn't downloaded
     if (!this.modelStatus) {
       this.showDialog = true;
       this.downloading = false;
