@@ -4,8 +4,17 @@ import nltk
 from nltk.tokenize import sent_tokenize
 import torch
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+import signal
+import threading
+from functools import wraps
+import sys
+from threading import Event
+import multiprocessing
+import json
 
 MODEL_NAME = "potsawee/t5-large-generation-squad-QuestionAnswer"
+
+download_interrupt = Event()
 
 class ModelDownloadStatus:
     def __init__(self):
@@ -18,6 +27,7 @@ class ModelDownloadStatus:
         self.canceled = True
         self.status = "canceled"
         self.error_message = "Download canceled"
+        download_interrupt.set()
         try:
             model_path = os.path.join(MODEL_DIR, MODEL_NAME.split('/')[-1])
             if os.path.exists(model_path):
@@ -84,84 +94,114 @@ def check_model_downloaded():
         print(f"Error checking model files: {e}")
         return False
 
+class ModelDownloadProcess(multiprocessing.Process):
+    def __init__(self, model_path):
+        super().__init__()
+        self.model_path = model_path
+        self.status_file = os.path.join(os.path.dirname(model_path), 'download_status.json')
+
+    def update_status(self, status, error=None):
+        with open(self.status_file, 'w') as f:
+            json.dump({
+                'status': status,
+                'error': error,
+                'pid': self.pid
+            }, f)
+
+    def run(self):
+        try:
+            self.update_status('downloading')
+            
+            # Set environment variables
+            os.environ['TRANSFORMERS_CACHE'] = self.model_path
+            os.environ['HF_HOME'] = self.model_path
+            os.environ.pop('TRANSFORMERS_OFFLINE', None)
+            os.environ.pop('HF_HUB_OFFLINE', None)
+            
+            # Download tokenizer
+            tokenizer = AutoTokenizer.from_pretrained(
+                MODEL_NAME,
+                use_fast=True,
+                force_download=True,
+                local_files_only=False
+            )
+            tokenizer.save_pretrained(self.model_path)
+            
+            # Download model
+            model = AutoModelForSeq2SeqLM.from_pretrained(
+                MODEL_NAME,
+                force_download=True,
+                local_files_only=False,
+                use_safetensors=True
+            )
+            model.save_pretrained(self.model_path, safe_serialization=True)
+            
+            self.update_status('complete')
+            
+        except Exception as e:
+            self.update_status('error', str(e))
+            if os.path.exists(self.model_path):
+                import shutil
+                shutil.rmtree(self.model_path)
+
 def download_model(token: str = None):
-    global download_status, qa_tokenizer, qa_model
+    global download_status
     download_status.status = "downloading"
     download_status.canceled = False
     
     model_path = os.path.join(MODEL_DIR, MODEL_NAME.split('/')[-1])
+    if os.path.exists(model_path):
+        import shutil
+        shutil.rmtree(model_path)
     os.makedirs(model_path, exist_ok=True)
     
     try:
-        if download_status.canceled:
-            return False
-            
-        # Set environment variables for download
-        os.environ['TRANSFORMERS_CACHE'] = model_path
-        os.environ['HF_HOME'] = model_path
-        os.environ.pop('TRANSFORMERS_OFFLINE', None)
-        os.environ.pop('HF_HUB_OFFLINE', None)
+        # Start download process
+        download_process = ModelDownloadProcess(model_path)
+        download_process.start()
         
-        print("Starting model download...")
-        print(f"Downloading to: {model_path}")
-        
-        if download_status.canceled:
-            return False
+        # Monitor status
+        status_file = os.path.join(os.path.dirname(model_path), 'download_status.json')
+        while download_process.is_alive():
+            if download_status.canceled:
+                # Kill the process
+                download_process.terminate()
+                download_process.join(timeout=2.0)
+                if download_process.is_alive():
+                    os.kill(download_process.pid, signal.SIGKILL)
+                # Clean up
+                if os.path.exists(model_path):
+                    import shutil
+                    shutil.rmtree(model_path)
+                if os.path.exists(status_file):
+                    os.remove(status_file)
+                return False
             
-        # First download and save tokenizer explicitly
-        qa_tokenizer = AutoTokenizer.from_pretrained(
-            MODEL_NAME,
-            use_fast=True,
-            local_files_only=False,
-            force_download=True
-        )
+            # Check status file
+            if os.path.exists(status_file):
+                with open(status_file) as f:
+                    status = json.load(f)
+                    if status['status'] == 'error':
+                        download_status.error_message = status['error']
+                        return False
+                    elif status['status'] == 'complete':
+                        return True
+                        
+            download_process.join(timeout=0.1)
         
-        if download_status.canceled:
-            return False
+        # Clean up status file
+        if os.path.exists(status_file):
+            os.remove(status_file)
             
-        # Save tokenizer files to model path
-        qa_tokenizer.save_pretrained(model_path)
+        return check_model_downloaded()
         
-        if download_status.canceled:
-            return False
-            
-        print("Tokenizer downloaded and saved, now downloading model...")
-        
-        # Now download the model
-        qa_model = AutoModelForSeq2SeqLM.from_pretrained(
-            MODEL_NAME,
-            local_files_only=False,
-            force_download=True,
-            use_safetensors=True
-        )
-        
-        if download_status.canceled:
-            return False
-            
-        # Save model to the same path
-        qa_model.save_pretrained(model_path, safe_serialization=True)
-        
-        if download_status.canceled:
-            return False
-            
-        if check_model_downloaded():
-            print("✓ All files verified successfully")
-            download_status.status = "complete"
-            return True
-        else:
-            raise RuntimeError("Model files verification failed after download")
-            
     except Exception as e:
-        error_msg = str(e)
-        print(f"Download error: {error_msg}")
         download_status.status = "error"
-        download_status.error_message = error_msg
+        download_status.error_message = str(e)
         return False
 
 def get_download_progress():
     return {
-        "progress": download_status.progress,
-        "total": download_status.total,
         "status": download_status.status,
         "error_message": download_status.error_message
     }
@@ -260,7 +300,7 @@ def split_semantic_chunks(text: str, max_tokens: int = 100) -> list[str]:
     if qa_tokenizer is None or not check_model_downloaded():
         raise RuntimeError("Model not initialized or not downloaded")
     
-    os.environ['TRANSFORMERS_OFFLINE'] = '1'  # Ensure no auto-download
+    os.environ['TRANSFORMERS_OFFLINE'] = '1'
     sentences = sent_tokenize(text)
     chunks = []
     current_chunk = ""

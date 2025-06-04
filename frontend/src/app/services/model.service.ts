@@ -9,8 +9,6 @@ export interface ModelDownloadResponse {
 }
 
 export interface ModelProgress {
-  progress: number;
-  total: number;
   status: string;
   error_message?: string;
 }

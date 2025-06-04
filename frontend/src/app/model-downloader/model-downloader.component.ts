@@ -14,7 +14,6 @@ import { ModelService, ModelProgress } from '../services/model.service';
 export class ModelDownloaderComponent implements OnInit {
   showDialog = false;
   downloading = false;
-  progress = 0;
   errorMessage: string | null = null;
   modelStatus = false;
 
