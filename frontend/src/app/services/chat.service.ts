@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import { tap, catchError, switchMap, map } from 'rxjs/operators';
 
 export interface ChatMessage {
   text: string;
@@ -34,7 +34,6 @@ export interface Subject {
 export class ChatService {
   private apiUrl = 'http://localhost:5000/api';
   private timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  private currentConversationId: number | null = null;
   private subjectsSource = new BehaviorSubject<Subject[]>([]);
   subjects$ = this.subjectsSource.asObservable();
 
@@ -77,16 +76,14 @@ export class ChatService {
         subject_desc: subjectDesc,
       })
       .pipe(
-        tap(() => this.getSubjects()),
-        tap((response) => {
-          this.currentConversationId = response.conversation_id;
-        })
+        switchMap((response) => this.getSubjects().pipe(map(() => response)))
       );
   }
 
   deleteSubject(id: number): Observable<void> {
-    return this.http
-      .delete<void>(`${this.apiUrl}/subjects/${id}`)
-      .pipe(tap(() => this.getSubjects()));
+    return this.http.delete<void>(`${this.apiUrl}/subjects/${id}`).pipe(
+      switchMap(() => this.getSubjects()),
+      map(() => undefined)
+    );
   }
 }
