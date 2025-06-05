@@ -50,10 +50,8 @@ export class AppComponent implements OnInit {
       },
     });
 
-    // Make the API call and handle the subscription here
     this.chatService.getSubjects().subscribe({
       error: (error) => {
-        // If we get a model not initialized error, we can handle it here
         console.error('Error fetching subjects:', error);
       },
     });

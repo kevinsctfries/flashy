@@ -61,7 +61,6 @@ export class ChatService {
     return this.http.get<Subject[]>(`${this.apiUrl}/subjects`).pipe(
       tap((subjects) => this.subjectsSource.next(subjects)),
       catchError((error) => {
-        // Don't update subjects if there's an error
         console.error('Error fetching subjects:', error);
         return throwError(() => error);
       })
@@ -78,7 +77,7 @@ export class ChatService {
         subject_desc: subjectDesc,
       })
       .pipe(
-        tap(() => this.getSubjects()), // refreshes subjects after creating new one
+        tap(() => this.getSubjects()),
         tap((response) => {
           this.currentConversationId = response.conversation_id;
         })
@@ -86,8 +85,8 @@ export class ChatService {
   }
 
   deleteSubject(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/subjects/${id}`).pipe(
-      tap(() => this.getSubjects()) // refreshes subjects after deletion
-    );
+    return this.http
+      .delete<void>(`${this.apiUrl}/subjects/${id}`)
+      .pipe(tap(() => this.getSubjects()));
   }
 }
