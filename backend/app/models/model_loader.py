@@ -5,9 +5,7 @@ from nltk.tokenize import sent_tokenize
 import torch
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 import signal
-import threading
 from functools import wraps
-import sys
 from threading import Event
 import multiprocessing
 import json
@@ -66,9 +64,8 @@ def check_model_downloaded():
             print(f"Model directory does not exist at: {model_path}")
             return False
             
-        # List all files in directory for debugging
         print("Files in model directory:")
-        for root, dirs, files in os.walk(model_path):
+        for root, files in os.walk(model_path):
             for file in files:
                 print(f"- {os.path.join(root, file)}")
             
@@ -123,18 +120,15 @@ class ModelDownloadProcess(multiprocessing.Process):
         try:
             self.update_status('downloading')
             
-            # Create a fresh directory for the model
             if os.path.exists(self.model_path):
                 shutil.rmtree(self.model_path)
             os.makedirs(self.model_path, exist_ok=True)
             
-            # Set environment variables to force local path
             os.environ['TRANSFORMERS_CACHE'] = self.model_path
             os.environ['HF_HOME'] = self.model_path
             os.environ.pop('TRANSFORMERS_OFFLINE', None)
             os.environ.pop('HF_HUB_OFFLINE', None)
             
-            # Download tokenizer directly to model path
             tokenizer = AutoTokenizer.from_pretrained(
                 MODEL_NAME,
                 use_fast=True,
@@ -144,7 +138,6 @@ class ModelDownloadProcess(multiprocessing.Process):
             )
             tokenizer.save_pretrained(self.model_path)
             
-            # Download model directly to model path
             model = AutoModelForSeq2SeqLM.from_pretrained(
                 MODEL_NAME,
                 force_download=True,
@@ -154,7 +147,6 @@ class ModelDownloadProcess(multiprocessing.Process):
             )
             model.save_pretrained(self.model_path, safe_serialization=True)
             
-            # Verify all files are in place
             if check_model_downloaded():
                 self.update_status('complete')
             else:
@@ -169,6 +161,7 @@ def download_model(token: str = None):
     global download_status
     download_status.status = "downloading"
     download_status.canceled = False
+    download_status.error_message = None
     
     model_path = os.path.join(MODEL_DIR, MODEL_NAME.split('/')[-1])
     if os.path.exists(model_path):
@@ -176,55 +169,48 @@ def download_model(token: str = None):
     os.makedirs(model_path, exist_ok=True)
     
     try:
-        # Start download process
         download_process = ModelDownloadProcess(model_path)
         download_process.start()
         
-        # Monitor status
         status_file = os.path.join(os.path.dirname(model_path), 'download_status.json')
         while download_process.is_alive():
             if download_status.canceled:
-                # Kill the process
                 download_process.terminate()
                 download_process.join(timeout=2.0)
                 if download_process.is_alive():
                     os.kill(download_process.pid, signal.SIGKILL)
-                # Clean up
                 if os.path.exists(model_path):
                     shutil.rmtree(model_path)
                 if os.path.exists(status_file):
                     os.remove(status_file)
-                download_status.status = "canceled"  # Set status to canceled
+                download_status.status = "canceled"
                 return False
             
-            # Check status file
             if os.path.exists(status_file):
                 with open(status_file) as f:
                     status = json.load(f)
                     if status['status'] == 'error':
-                        download_status.status = "error"  # Set status to error
                         download_status.error_message = status['error']
-                        return False
                     elif status['status'] == 'complete':
-                        download_status.status = "complete"  # Set status to complete
-                        return True
-                        
+                        if check_model_downloaded():
+                            download_status.status = "complete"
+                            return True
+            
             download_process.join(timeout=0.1)
         
-        # Clean up status file
         if os.path.exists(status_file):
             os.remove(status_file)
-            
-        success = check_model_downloaded()
-        if success:
-            download_status.status = "complete"  # Set status to complete after verification
-        else:
-            download_status.status = "error"  # Set status to error if verification fails
-            download_status.error_message = "Model verification failed"
-        return success
         
+        if check_model_downloaded():
+            download_status.status = "complete"
+            return True
+        else:
+            download_status.status = "error"
+            download_status.error_message = "Download process ended without completing"
+            return False
+            
     except Exception as e:
-        download_status.status = "error"  # Set status to error on exception
+        download_status.status = "error"
         download_status.error_message = str(e)
         return False
 
@@ -238,7 +224,6 @@ def initialize_model():
     global qa_tokenizer, qa_model
     
     try:
-        # Get the specific model directory path
         model_path = os.path.join(MODEL_DIR, MODEL_NAME.split('/')[-1])
         print("=== Model Initialization Debug ===")
         print(f"Model path: {model_path}")
@@ -257,7 +242,6 @@ def initialize_model():
         if qa_tokenizer is None or qa_model is None:
             print("Loading model and tokenizer...")
             
-            # Set environment variables for local loading
             os.environ['TRANSFORMERS_OFFLINE'] = '1'
             
             qa_tokenizer = AutoTokenizer.from_pretrained(
@@ -271,7 +255,6 @@ def initialize_model():
                 local_files_only=True
             )
             
-            # Move model to appropriate device
             device = "cuda" if torch.cuda.is_available() else "cpu"
             qa_model.to(device)
             print(f"Model loaded successfully on {device}")
@@ -290,24 +273,19 @@ def generate_qa_pair(context: str) -> tuple[str, str] | None:
             raise RuntimeError("Model not initialized. Please download the model first.")
     
     try:
-        os.environ['TRANSFORMERS_OFFLINE'] = '1'  # Ensure no auto-download
+        os.environ['TRANSFORMERS_OFFLINE'] = '1'
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         
-        # Add debug prints
         print(f"Generating Q&A for context length: {len(context)}")
         print(f"Using device: {device}")
         
-        # Ensure model is on correct device
         qa_model.to(device)
         
-        # Create inputs and move to device
         inputs = qa_tokenizer(context, return_tensors="pt")
         inputs = {k: v.to(device) for k, v in inputs.items()}
         
-        # Generate on device
         outputs = qa_model.generate(**inputs, max_length=100)
         
-        # Move outputs back to CPU for decoding
         outputs = outputs.cpu()
         decoded = qa_tokenizer.decode(outputs[0], skip_special_tokens=False)
         
@@ -346,7 +324,6 @@ def split_semantic_chunks(text: str, max_tokens: int = 100) -> list[str]:
         chunks.append(current_chunk.strip())
 
     return chunks
-
 
 def generate_flashcards(text: str, max_questions: int = 5) -> list[dict]:
     chunks = split_semantic_chunks(text)
