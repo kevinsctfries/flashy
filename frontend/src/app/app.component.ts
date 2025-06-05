@@ -4,6 +4,7 @@ import { RouterModule, RouterOutlet, Router } from '@angular/router';
 import { ChatService, Subject } from './services/chat.service';
 import { DeleteBoxComponent } from './delete-box/delete-box.component';
 import { ModelDownloaderComponent } from './model-downloader/model-downloader.component';
+import { ModelService } from './services/model.service';
 
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -34,13 +35,17 @@ export class AppComponent implements OnInit {
   subjects: Subject[] = [];
   showDeleteDialog = false;
   subjectToDelete: number | null = null;
+  modelDownloaded = false;
 
-  constructor(private chatService: ChatService, private router: Router) {}
+  constructor(
+    private chatService: ChatService,
+    private modelService: ModelService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.initializeSidebar();
 
-    // Subscribe to subjects$ for updates
     this.chatService.subjects$.subscribe({
       next: (subjects) => {
         this.subjects = subjects;
@@ -55,6 +60,8 @@ export class AppComponent implements OnInit {
         console.error('Error fetching subjects:', error);
       },
     });
+
+    this.checkModelStatus();
   }
 
   private initializeSidebar(): void {
@@ -133,5 +140,17 @@ export class AppComponent implements OnInit {
   handleDeleteCancel() {
     this.showDeleteDialog = false;
     this.subjectToDelete = null;
+  }
+
+  private checkModelStatus() {
+    this.modelService.checkModelStatus().subscribe({
+      next: (status) => {
+        this.modelDownloaded = status.downloaded;
+      },
+      error: (error) => {
+        console.error('Error checking model status:', error);
+        this.modelDownloaded = false;
+      },
+    });
   }
 }

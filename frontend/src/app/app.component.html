@@ -81,7 +81,11 @@
     <div class="header">
       <button class="button" (click)="openNav()">☰</button>
       <div class="header-right">
-        <button class="button" (click)="openDownloadMenu()">
+        <button
+          class="button"
+          (click)="openDownloadMenu()"
+          *ngIf="!modelDownloaded"
+        >
           Download Model
         </button>
         <h1 class="header-title">

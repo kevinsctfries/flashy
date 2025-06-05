@@ -11,6 +11,7 @@ import sys
 from threading import Event
 import multiprocessing
 import json
+import shutil
 
 MODEL_NAME = "potsawee/t5-large-generation-squad-QuestionAnswer"
 
@@ -65,6 +66,12 @@ def check_model_downloaded():
             print(f"Model directory does not exist at: {model_path}")
             return False
             
+        # List all files in directory for debugging
+        print("Files in model directory:")
+        for root, dirs, files in os.walk(model_path):
+            for file in files:
+                print(f"- {os.path.join(root, file)}")
+            
         required_files = [
             "config.json",
             "tokenizer_config.json",
@@ -100,48 +107,62 @@ class ModelDownloadProcess(multiprocessing.Process):
         self.model_path = model_path
         self.status_file = os.path.join(os.path.dirname(model_path), 'download_status.json')
 
-    def update_status(self, status, error=None):
-        with open(self.status_file, 'w') as f:
-            json.dump({
-                'status': status,
-                'error': error,
-                'pid': self.pid
-            }, f)
+    def update_status(self, status: str, error: str = None):
+        """Update the download status in the status file"""
+        try:
+            with open(self.status_file, 'w') as f:
+                json.dump({
+                    'status': status,
+                    'error': error,
+                    'pid': self.pid
+                }, f)
+        except Exception as e:
+            print(f"Error updating status: {e}")
 
     def run(self):
         try:
             self.update_status('downloading')
             
-            # Set environment variables
+            # Create a fresh directory for the model
+            if os.path.exists(self.model_path):
+                shutil.rmtree(self.model_path)
+            os.makedirs(self.model_path, exist_ok=True)
+            
+            # Set environment variables to force local path
             os.environ['TRANSFORMERS_CACHE'] = self.model_path
             os.environ['HF_HOME'] = self.model_path
             os.environ.pop('TRANSFORMERS_OFFLINE', None)
             os.environ.pop('HF_HUB_OFFLINE', None)
             
-            # Download tokenizer
+            # Download tokenizer directly to model path
             tokenizer = AutoTokenizer.from_pretrained(
                 MODEL_NAME,
                 use_fast=True,
                 force_download=True,
-                local_files_only=False
+                local_files_only=False,
+                cache_dir=self.model_path
             )
             tokenizer.save_pretrained(self.model_path)
             
-            # Download model
+            # Download model directly to model path
             model = AutoModelForSeq2SeqLM.from_pretrained(
                 MODEL_NAME,
                 force_download=True,
                 local_files_only=False,
-                use_safetensors=True
+                use_safetensors=True,
+                cache_dir=self.model_path
             )
             model.save_pretrained(self.model_path, safe_serialization=True)
             
-            self.update_status('complete')
+            # Verify all files are in place
+            if check_model_downloaded():
+                self.update_status('complete')
+            else:
+                raise Exception("Model files verification failed after download")
             
         except Exception as e:
             self.update_status('error', str(e))
             if os.path.exists(self.model_path):
-                import shutil
                 shutil.rmtree(self.model_path)
 
 def download_model(token: str = None):
@@ -151,7 +172,6 @@ def download_model(token: str = None):
     
     model_path = os.path.join(MODEL_DIR, MODEL_NAME.split('/')[-1])
     if os.path.exists(model_path):
-        import shutil
         shutil.rmtree(model_path)
     os.makedirs(model_path, exist_ok=True)
     
@@ -171,10 +191,10 @@ def download_model(token: str = None):
                     os.kill(download_process.pid, signal.SIGKILL)
                 # Clean up
                 if os.path.exists(model_path):
-                    import shutil
                     shutil.rmtree(model_path)
                 if os.path.exists(status_file):
                     os.remove(status_file)
+                download_status.status = "canceled"  # Set status to canceled
                 return False
             
             # Check status file
@@ -182,9 +202,11 @@ def download_model(token: str = None):
                 with open(status_file) as f:
                     status = json.load(f)
                     if status['status'] == 'error':
+                        download_status.status = "error"  # Set status to error
                         download_status.error_message = status['error']
                         return False
                     elif status['status'] == 'complete':
+                        download_status.status = "complete"  # Set status to complete
                         return True
                         
             download_process.join(timeout=0.1)
@@ -193,10 +215,16 @@ def download_model(token: str = None):
         if os.path.exists(status_file):
             os.remove(status_file)
             
-        return check_model_downloaded()
+        success = check_model_downloaded()
+        if success:
+            download_status.status = "complete"  # Set status to complete after verification
+        else:
+            download_status.status = "error"  # Set status to error if verification fails
+            download_status.error_message = "Model verification failed"
+        return success
         
     except Exception as e:
-        download_status.status = "error"
+        download_status.status = "error"  # Set status to error on exception
         download_status.error_message = str(e)
         return False
 
