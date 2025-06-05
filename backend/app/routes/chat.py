@@ -25,11 +25,9 @@ def chat():
         if not conversation_id:
             return jsonify({'error': 'No conversation ID provided'}), 400
 
-        # Check if model files exist before trying to initialize
         if not check_model_downloaded():
             return jsonify({'error': 'Model not downloaded. Please download the model first.'}), 400
 
-        # Only try to initialize if files exist
         if not initialize_model():
             return jsonify({'error': 'Could not initialize model.'}), 400
 
@@ -43,7 +41,6 @@ def chat():
 
         local_time = datetime.now(ZoneInfo(user_tz))
         
-        # Now try to generate flashcards after model check
         try:
             flashcards = generate_flashcards(message)
             if flashcards:
@@ -147,13 +144,12 @@ def new_conversation():
 
 @chat_bp.route('/subjects', methods=['GET'])
 def get_subjects():
-    # Remove any model-related imports or checks from this endpoint
     try:
-        subjects = Chat.query.with_entities(
+        subjects = Chat.query.filter_by(message_id=1).with_entities(
             Chat.id, 
             Chat.subject_name, 
             Chat.subject_desc
-        ).distinct().all()
+        ).all()
         
         return jsonify([{
             'id': s.id,
@@ -171,7 +167,6 @@ def delete_subject(subject_id):
         return '', 204
         
     try:
-        # Delete all messages for this subject
         messages = Chat.query.filter_by(id=subject_id).all()
         for message in messages:
             db.session.delete(message)
